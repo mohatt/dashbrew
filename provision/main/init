@@ -1,0 +1,5 @@
+#!/usr/bin/php
+<?php
+
+// Initialize the autoloader
+require __DIR__ . '/src/autoload.php';

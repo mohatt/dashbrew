@@ -1,0 +1,17 @@
+# Ignore stuff that pops up locally
+*.sublime*
+.DS_Store
+.idea
+
+# Ignore vagrant's files
+/.vagrant
+
+# Ignore config file
+/config/config.yaml
+
+# Ignore public directory
+/public/*
+
+# Ignore custom shell scripts
+/provision/pre/*
+/provision/post/*
