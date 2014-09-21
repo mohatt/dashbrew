@@ -6,12 +6,8 @@
 # Ignore vagrant's files
 /.vagrant
 
-# Ignore config file
-/config/config.yaml
+# Ignore config files
+/config/*
 
 # Ignore public directory
 /public/*
-
-# Ignore custom shell scripts
-/provision/pre/*
-/provision/post/*
