@@ -11,7 +11,7 @@ use Dashbrew\Util\Util;
  *
  * @package Dashbrew\Tasks
  */
-class ServiceRestart extends Task {
+class ServiceRestartTask extends Task {
 
     /**
      * @throws \Exception

@@ -15,7 +15,7 @@ use Dashbrew\Util\Finder;
  *
  * @package Dashbrew\Tasks
  */
-class ConfigDefaults extends Task {
+class ConfigDefaultsTask extends Task {
 
     /**
      * @throws \Exception

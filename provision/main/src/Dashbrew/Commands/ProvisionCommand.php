@@ -7,10 +7,10 @@ use Dashbrew\Input\InputInterface;
 use Dashbrew\Output\OutputInterface;
 use Dashbrew\Task\Runner as TaskRunner;
 use Dashbrew\Tasks\InitTask;
-use Dashbrew\Tasks\ConfigDefaults;
-use Dashbrew\Tasks\ConfigSync;
+use Dashbrew\Tasks\ConfigDefaultsTask;
+use Dashbrew\Tasks\ConfigSyncTask;
 use Dashbrew\Tasks\PhpTask;
-use Dashbrew\Tasks\ServiceRestart;
+use Dashbrew\Tasks\ServiceRestartTask;
 use Dashbrew\Util\Config;
 use Dashbrew\Util\Util;
 
@@ -49,11 +49,11 @@ class ProvisionCommand extends Command {
         $runner = new TaskRunner($this, $input, $output);
 
         $runner->addTask(new InitTask);
-        $runner->addTask(new ConfigDefaults);
-        $runner->addTask(new ConfigSync);
+        $runner->addTask(new ConfigDefaultsTask);
+        $runner->addTask(new ConfigSyncTask);
         $runner->addTask(new PhpTask);
-        $runner->addTask(new ServiceRestart);
-        $runner->addTask(new ConfigSync);
+        $runner->addTask(new ServiceRestartTask);
+        $runner->addTask(new ConfigSyncTask);
 
         $runner->run();
     }

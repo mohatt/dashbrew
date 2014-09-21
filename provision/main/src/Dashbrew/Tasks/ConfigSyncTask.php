@@ -13,7 +13,7 @@ use Dashbrew\Util\Finder;
  *
  * @package Dashbrew\Tasks
  */
-class ConfigSync extends Task {
+class ConfigSyncTask extends Task {
 
     const DIR_SYNC_STATUS_FILE = '/vagrant/provision/main/etc/config_dirs_status.json';
 
