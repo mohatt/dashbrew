@@ -1,0 +1,18 @@
+[submodule "provision/main/src/Symfony/Component/Finder"]
+	path = provision/main/src/Symfony/Component/Finder
+	url = https://github.com/symfony/Finder.git
+[submodule "provision/main/src/Symfony/Component/Yaml"]
+	path = provision/main/src/Symfony/Component/Yaml
+	url = https://github.com/symfony/Yaml.git
+[submodule "provision/main/src/Symfony/Component/Filesystem"]
+	path = provision/main/src/Symfony/Component/Filesystem
+	url = https://github.com/symfony/Filesystem.git
+[submodule "provision/main/src/Symfony/Component/Process"]
+	path = provision/main/src/Symfony/Component/Process
+	url = https://github.com/symfony/Process.git
+[submodule "provision/main/src/Symfony/Component/Console"]
+	path = provision/main/src/Symfony/Component/Console
+	url = https://github.com/symfony/Console.git
+[submodule "provision/main/src/Symfony/Component/Stopwatch"]
+	path = provision/main/src/Symfony/Component/Stopwatch
+	url = https://github.com/symfony/Stopwatch.git

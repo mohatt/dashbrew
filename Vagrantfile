@@ -6,7 +6,7 @@ Vagrant.require_version '>= 1.6.0'
 Vagrant.configure(2) do |config|
 
   # Every Vagrant virtual environment requires a box to build off of.
-  config.vm.box = "ubuntu/trusty64"
+  config.vm.box = "ubuntu-14.04-dashbrew"
 
   # The hostname the machine should have.
   config.vm.hostname = "dashbrew.dev"
@@ -43,7 +43,7 @@ Vagrant.configure(2) do |config|
   # Run the main shell provisioner.
   config.vm.provision 'shell' do |s|
     s.path        = 'provision/provision.sh'
-    s.privileged  = false
+    s.privileged  = true
     s.args        = config.ssh.username
   end
 end
