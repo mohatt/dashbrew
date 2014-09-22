@@ -153,16 +153,10 @@ class PhpTask extends Task {
             $this->output->writeInfo("Configured fpm");
         }
 
-        $conf_template_file = '/vagrant/provision/main/templates/monit/conf.d/php-fpm.conf.template';
-        if(!file_exists($conf_template_file)){
-            throw new \Exception("Unable to find monit php-fpm config template file $conf_template_file");
-        }
-
-        $conf_template = str_replace(
-            ['{{ version }}', '{{ port }}'],
-            [$meta['_version'], $meta['fpm']['port']],
-            file_get_contents($conf_template_file)
-        );
+        $conf_template = Util::renderTemplate('monit/conf.d/php-fpm.conf.template', [
+            'version' => $meta['_version'],
+            'port'    => $meta['fpm']['port'],
+        ], true);
 
         if(file_exists($monit_conf_file) && md5($conf_template) === md5_file($monit_conf_file)){
             return;
