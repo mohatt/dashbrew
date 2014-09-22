@@ -22,6 +22,8 @@ class PhpTask extends Task {
         $phps = Config::get('php::builds');
         $phpsOld = Config::getOld('php::builds');
         $installedPhps = Util::getInstalledPhps();
+        $default_php = null;
+
         foreach($phps as $version => $meta) {
 
             $meta['_version'] = $version;
@@ -34,7 +36,13 @@ class PhpTask extends Task {
             $this->manageExtensions($meta);
 
             $this->manageFpm($meta);
+
+            if(!empty($meta['default'])){
+                $default_php = $version;
+            }
         }
+
+        $this->setDefaultPhp($default_php);
     }
 
     protected function managePhp($meta) {
@@ -139,9 +147,11 @@ class PhpTask extends Task {
 
         $fs = Util::getFilesystem();
         $monit_conf_file = "/etc/monit/conf.d/php-$meta[_version]-fpm.conf";
+        $apache_conf_file = "/etc/apache2/php/php-$meta[_version]-fpm.conf";
 
         if(empty($meta['fpm']['port']) || (isset($meta['installed']) && !$meta['installed'])){
             $fs->remove($monit_conf_file);
+            $fs->remove($apache_conf_file);
             return;
         }
 
@@ -153,22 +163,54 @@ class PhpTask extends Task {
             $this->output->writeInfo("Configured fpm");
         }
 
-        $conf_template = Util::renderTemplate('monit/conf.d/php-fpm.conf.template', [
+        $monit_conf_template = Util::renderTemplate('monit/conf.d/php-fpm.conf.template', [
             'version' => $meta['_version'],
             'port'    => $meta['fpm']['port'],
         ], true);
 
-        if(file_exists($monit_conf_file) && md5($conf_template) === md5_file($monit_conf_file)){
+        if(!file_exists($monit_conf_file) || md5($monit_conf_template) !== md5_file($monit_conf_file)){
+            $this->output->writeInfo("Writing $monit_conf_file");
+            if(!file_put_contents($monit_conf_file, $monit_conf_template)){
+                throw new \Exception("Failed writing monit php-fpm config file $monit_conf_file");
+            }
+
+            $fs->chown($monit_conf_file, 'root');
+            $fs->chgrp($monit_conf_file, 'root');
+        }
+
+        $apache_conf_template = Util::renderTemplate('apache/php/php-fpm.conf.template', [
+            'version' => $meta['_version'],
+            'port'    => $meta['fpm']['port'],
+        ], true);
+
+        if(!file_exists($apache_conf_file) || md5($apache_conf_template) !== md5_file($apache_conf_file)){
+            if(!file_exists(dirname($apache_conf_file))){
+                $fs->mkdir(dirname($apache_conf_file));
+            }
+
+            $this->output->writeInfo("Writing $apache_conf_file");
+            if(!file_put_contents($apache_conf_file, $apache_conf_template)){
+                throw new \Exception("Failed writing apache php-fpm config file $apache_conf_file");
+            }
+
+            $fs->chown($apache_conf_file, 'root');
+            $fs->chgrp($apache_conf_file, 'root');
+        }
+    }
+
+    protected function setDefaultPhp($version) {
+
+        // Use system php
+        if(null === $version){
+            if(!$this->runScript('phpbrew.php.switch_sys.sh')){
+                throw new \Exception("Unable to switch to system php");
+            }
             return;
         }
 
-        $this->output->writeInfo("Writing $monit_conf_file");
-        if(!file_put_contents($monit_conf_file, $conf_template)){
-            throw new \Exception("Failed writing monit php-fpm config file $monit_conf_file");
+        if(!$this->runScript('phpbrew.php.switch.sh', $version)){
+            throw new \Exception("Unable to switch to php $version");
         }
-
-        $fs->chown($monit_conf_file, 'root');
-        $fs->chgrp($monit_conf_file, 'root');
     }
 
     protected function runScript() {
