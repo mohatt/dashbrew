@@ -55,7 +55,6 @@ class ProjectsInitTask extends Task {
 
         foreach($finder as $file){
             $file_path = $file->getPathname();
-            $file_dir_path = $file->getPath();
 
             try {
                 $file_projects = $yaml->parse(file_get_contents($file_path));
@@ -65,46 +64,45 @@ class ProjectsInitTask extends Task {
                 continue;
             }
 
-            foreach($file_projects as $project_id => $project_config) {
-                # Add important paths
-                $project_config['_path'] = str_replace('/vagrant/public', '', $file_path);
-                $project_config['_dir_path'] = str_replace('/vagrant/public', '', $file_dir_path);
+            foreach($file_projects as $id => $project) {
+                # Add project file path
+                $project['_path'] = $file_path;
 
-                if(isset($projects_catalog[$project_id])){
-                    if($project_config == $projects_catalog[$project_id]){
-                        $projects['leave'][$project_id] = $project_config;
+                if(isset($projects_catalog[$id])){
+                    if($project == $projects_catalog[$id]){
+                        $projects['leave'][$id] = $project;
                     }
                     else {
-                        $projects['modify'][$project_id] = $project_config;
+                        $projects['modify'][$id] = $project;
                     }
                 }
                 else {
                     # Ignore duplicates
-                    if (isset($projects['create'][$project_id])){
+                    if (isset($projects['create'][$id])){
                         $this->output->writeError(
-                            "Unable to proccess project '$project_id' at '$project_config[_path]', " .
-                            "another project with the same name is already exist at '$projects[create][$project_id][_path]'."
+                            "Unable to proccess project '$id' at '$project[_path]', " .
+                            "another project with the same name is already exist at '$projects[create][$id][_path]'."
                         );
 
                         continue;
                     }
 
-                    $projects['create'][$project_id] = $project_config;
+                    $projects['create'][$id] = $project;
                 }
 
-                if(isset($projects_catalog[$project_id])){
-                    unset($projects_catalog[$project_id]);
+                if(isset($projects_catalog[$id])){
+                    unset($projects_catalog[$id]);
                 }
 
-                if(isset($project_config['vhost']['servername'])){
-                    $hosts[] = $project_config['vhost']['servername'];
+                if(!empty($project['vhost']['servername'])){
+                    $hosts[] = $project['vhost']['servername'];
                 }
                 else {
-                    $hosts[] = $project_id;
+                    $hosts[] = $id;
                 }
 
-                if(isset($project_config['vhost']['serveraliases'])){
-                    foreach($project_config['vhost']['serveraliases'] as $serveralias){
+                if(isset($project['vhost']['serveraliases'])){
+                    foreach($project['vhost']['serveraliases'] as $serveralias){
                         $hosts[] = $serveralias;
                     }
                 }
@@ -112,23 +110,25 @@ class ProjectsInitTask extends Task {
         }
 
         # Prevent project duplicates
-        foreach($projects['create'] as $project_id => $project_config){
-            foreach(['leave', 'modify'] as $a){
-                if (isset($projects[$a][$project_id])){
+        foreach($projects['create'] as $id => $project){
+            foreach(['leave', 'modify'] as $action){
+                if (isset($projects[$action][$id])){
                     $this->output->writeError(
-                        "Unable to proccess project '$project_id' at '$project_config[_path]', " .
-                        "another project with the same name is already exist at '$projects[$a][$project_id][_path]'."
+                        "Unable to proccess project '$id' at '$project[_path]', " .
+                        "another project with the same name is already exist at '$projects[$action][$id][_path]'."
                     );
 
-                    unset($projects['create'][$project_id]);
+                    unset($projects['create'][$id]);
                 }
             }
         }
 
         # Projects that are no longer exist needs to be deleted
-        foreach($projects_catalog as $project_id => $project_config){
-            $projects['delete'][$project_id] = $project_config;
+        foreach($projects_catalog as $id => $project){
+            $projects['delete'][$id] = $project;
         }
+
+        Registry::set('projects', $projects);
 
         if(count($projects['modify']) == 0 && count($projects['create']) == 0 && count($projects['delete']) == 0){
             return;
@@ -158,7 +158,5 @@ class ProjectsInitTask extends Task {
         if(!file_put_contents(self::PROJECTS_CATALOG_FILE, json_encode(array_merge($projects['leave'], $projects['modify'], $projects['create'])))){
             $this->output->writeError("Unable to write '" . self::PROJECTS_CATALOG_FILE . "'");
         }
-
-        Registry::set('projects', $projects);
     }
 }
