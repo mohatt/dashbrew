@@ -50,21 +50,21 @@ class InitTask extends Task {
             [
                 'path'    => '/etc/mysql/my.cnf',
                 'source'  => '/vagrant/config/mysql/my.cnf',
-                'default' => '/vagrant/provision/main/config/mysql/my.cnf',
+                'default' => '/etc/mysql/my.cnf',
                 'owner'   => 'root',
                 'group'   => 'root',
             ],
             [
                 'path'    => '/etc/php5/cli/php.ini',
                 'source'  => '/vagrant/config/php/cli/php.ini',
-                'default' => '/vagrant/provision/main/config/php/cli/php.ini',
+                'default' => '/etc/php5/cli/php.ini',
                 'owner'   => 'root',
                 'group'   => 'root',
             ],
             [
                 'path'    => '/opt/phpbrew/config.yaml',
-                'source'  => '/vagrant/config/phpbrew/variants.yaml',
-                'default' => '/vagrant/provision/main/config/phpbrew/variants.yaml',
+                'source'  => '/vagrant/config/phpbrew/config.yaml',
+                'default' => '/opt/phpbrew/config.yaml',
                 'owner'   => 'vagrant',
                 'group'   => 'vagrant',
             ],
@@ -84,15 +84,13 @@ class InitTask extends Task {
                 'default' => '/vagrant/provision/main/config/monit/conf.d',
                 'owner'   => 'root',
                 'group'   => 'root',
-                'prefix'  => '000-'
             ],
             [
                 'path'    => '/etc/php5/cli/conf.d',
                 'source'  => '/vagrant/config/php/cli/conf.d',
-                'default' => '/vagrant/config/php/cli/conf.d',
+                'default' => '/etc/php5/cli/conf.d',
                 'owner'   => 'root',
                 'group'   => 'root',
-                'prefix'  => 'zzz-'
             ]
         ];
 
@@ -105,7 +103,6 @@ class InitTask extends Task {
                 'default' => "/opt/phpbrew/php/$php_dirname/var/db",
                 'owner'   => 'vagrant',
                 'group'   => 'vagrant',
-                'prefix'  => 'zzz-'
             ];
 
             $config_files[] = [
