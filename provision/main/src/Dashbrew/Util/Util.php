@@ -10,6 +10,41 @@ namespace Dashbrew\Util;
 class Util {
 
     /**
+     * @param string $template
+     * @param array $vars
+     * @param bool $simple
+     * @throws \Exception
+     * @return string
+     */
+    public static function renderTemplate($template, array $vars = [], $simple = true) {
+
+        $template = '/vagrant/provision/main/templates/' . ltrim($template, '/');
+        if(!file_exists($template)){
+            throw new \Exception("Unable to read template file '$template'");
+        }
+
+        if($simple){
+            $s = [];
+            $r = [];
+            foreach($vars as $varname => $varvalue){
+                $s[] = "{{ $varname }}";
+                $r[] = strval($varvalue);
+            }
+
+            return str_replace($s, $r, file_get_contents($template));
+        }
+
+        $render_template = function() use($template, $vars) {
+            ob_start();
+            extract($vars);
+            include($template);
+            return ob_get_clean();
+        };
+
+        return $render_template();
+    }
+
+    /**
      * @return array
      */
     public static function getInstalledPhps() {
