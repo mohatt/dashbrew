@@ -56,7 +56,7 @@ class PhpTask extends Task {
             }
 
             $this->output->writeInfo("Removing php");
-            if($this->runScript('phpbrew.php.remove.sh', $meta['_version'])){
+            if($this->runScript('phpbrew.php.remove.sh', true, $meta['_version'])){
                 $this->output->writeInfo("Successfully removed php");
             }
             else {
@@ -76,7 +76,7 @@ class PhpTask extends Task {
         }
 
         $this->output->writeInfo("Building php");
-        if($this->runScript('phpbrew.php.install.sh', $meta['_version'], $meta['variants'])){
+        if($this->runScript('phpbrew.php.install.sh', true, $meta['_version'], $meta['variants'])){
             $this->output->writeInfo("Successfully built php");
         }
         else {
@@ -106,7 +106,7 @@ class PhpTask extends Task {
             $ext_installed = file_exists($ini) || file_exists($ini_disabled);
             if(!$ext_installed || (isset($meta['_old']['extensions'][$extname]['version']) && $meta['_old']['extensions'][$extname]['version'] !== $extmeta['version'])){
                 $this->output->writeInfo("Installing $extname extension");
-                if($this->runScript('phpbrew.ext.install.sh', $meta['_version'], $extname)){
+                if($this->runScript('phpbrew.ext.install.sh', true, $meta['_version'], $extname)){
                     $this->output->writeInfo("Successfully installed $extname extension");
                 }
                 else {
@@ -117,7 +117,7 @@ class PhpTask extends Task {
             $ext_enabled = file_exists($ini);
             if($extmeta['enabled'] && !$ext_enabled){
                 $this->output->writeInfo("Enabling $extname extension");
-                if($this->runScript('phpbrew.ext.enable.sh', $meta['_version'], $extname)){
+                if($this->runScript('phpbrew.ext.enable.sh', false, $meta['_version'], $extname)){
                     $this->output->writeInfo("Successfully enabled $extname extension");
                 }
                 else {
@@ -127,7 +127,7 @@ class PhpTask extends Task {
 
             if (!$extmeta['enabled'] && $ext_enabled){
                 $this->output->writeInfo("Disabling $extname extension");
-                if($this->runScript('phpbrew.ext.disable.sh', $meta['_version'], $extname)){
+                if($this->runScript('phpbrew.ext.disable.sh', false, $meta['_version'], $extname)){
                     $this->output->writeInfo("Successfully disabled $extname extension");
                 }
                 else {
@@ -202,13 +202,13 @@ class PhpTask extends Task {
 
         // Use system php
         if(null === $version){
-            if(!$this->runScript('phpbrew.php.switch_sys.sh')){
+            if(!$this->runScript('phpbrew.php.switch_sys.sh', false)){
                 throw new \Exception("Unable to switch to system php");
             }
             return;
         }
 
-        if(!$this->runScript('phpbrew.php.switch.sh', $version)){
+        if(!$this->runScript('phpbrew.php.switch.sh', false, $version)){
             throw new \Exception("Unable to switch to php $version");
         }
     }
@@ -220,10 +220,17 @@ class PhpTask extends Task {
             throw new \Exception("No script to run");
         }
 
+        if(sizeof($args) == 1){
+            throw new \Exception("runScript() function requires at lease two arguments, 1 was given");
+        }
+
         $script = array_shift($args);
+        $send_output = array_shift($args);
         $process = new Process("sudo -u vagrant bash /vagrant/provision/main/scripts/$script " . implode(" ", $args), null, null, null, null);
-        $process->run(function ($type, $buffer) {
-            $this->output->write($buffer);
+        $process->run(function ($type, $buffer) use($send_output) {
+            if($send_output){
+                $this->output->write($buffer);
+            }
         });
 
         if ($process->isSuccessful()) {
