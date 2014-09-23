@@ -5,6 +5,7 @@ namespace Dashbrew\Tasks;
 use Dashbrew\Commands\ProvisionCommand;
 use Dashbrew\Task\Task;
 use Dashbrew\Util\Util;
+use Dashbrew\Util\Config;
 use Dashbrew\Util\Registry;
 use Dashbrew\Util\Finder;
 
@@ -36,7 +37,8 @@ class ProjectsInitTask extends Task {
 
         $hosts = [];
         $projects = [
-            'leave'   => [],
+            'skip'    => [],
+            'check'   => [],
             'modify'  => [],
             'create'  => [],
             'delete'  => [],
@@ -70,7 +72,12 @@ class ProjectsInitTask extends Task {
 
                 if(isset($projects_catalog[$id])){
                     if($project == $projects_catalog[$id]){
-                        $projects['leave'][$id] = $project;
+                        if($this->__projectNeedsCheck($id, $project)){
+                            $projects['check'][$id] = $project;
+                        }
+                        else {
+                            $projects['skip'][$id] = $project;
+                        }
                     }
                     else {
                         $projects['modify'][$id] = $project;
@@ -111,7 +118,7 @@ class ProjectsInitTask extends Task {
 
         # Prevent project duplicates
         foreach($projects['create'] as $id => $project){
-            foreach(['leave', 'modify'] as $action){
+            foreach(['skip', 'check', 'modify'] as $action){
                 if (isset($projects[$action][$id])){
                     $this->output->writeError(
                         "Unable to proccess project '$id' at '$project[_path]', " .
@@ -130,33 +137,53 @@ class ProjectsInitTask extends Task {
 
         Registry::set('projects', $projects);
 
-        if(count($projects['modify']) == 0 && count($projects['create']) == 0 && count($projects['delete']) == 0){
-            return;
-        }
-
-        $this->output->writeInfo(
-            "Found " . (
-                count($projects['leave']) +
-                count($projects['modify']) +
-                count($projects['create']) +
-                count($projects['delete'])
-            ) . " project(s)" .
-            (count($projects['leave'])  > 0 ? "\n        -> " . (count($projects['leave'])) .  " don't have changes" : "") .
-            (count($projects['create']) > 0 ? "\n        -> " . (count($projects['create'])) . " to be created" : "") .
-            (count($projects['modify']) > 0 ? "\n        -> " . (count($projects['modify'])) . " to be modified" : "") .
-            (count($projects['delete']) > 0 ? "\n        -> " . (count($projects['delete'])) . " to be deleted" : "")
+        $projects_total = (
+            count($projects['skip'])   +
+            count($projects['check'])  +
+            count($projects['modify']) +
+            count($projects['create']) +
+            count($projects['delete'])
         );
 
+        if($projects_total > count($projects['skip'])){
+            $this->output->writeInfo(
+                "Found " . $projects_total . " project(s)" .
+                (count($projects['skip'])   > 0 ? "\n       |--> " . (count($projects['skip']))   . " will be skipped" : "") .
+                (count($projects['check'])  > 0 ? "\n       |--> " . (count($projects['check']))  . " don't have changes but needs to be checked" : "") .
+                (count($projects['create']) > 0 ? "\n       |--> " . (count($projects['create'])) . " will be created" : "") .
+                (count($projects['modify']) > 0 ? "\n       |--> " . (count($projects['modify'])) . " will be modified" : "") .
+                (count($projects['delete']) > 0 ? "\n       |--> " . (count($projects['delete'])) . " will be deleted" : "")
+            );
+        }
+
         # Write hosts file so that it can be accessed later by the Hostmanager plugin
-        $this->output->writeInfo("Writing '" . self::PROJECTS_HOSTS_FILE . "'");
-        if(!file_put_contents(self::PROJECTS_HOSTS_FILE, json_encode($hosts))){
-            $this->output->writeError("Unable to write '" . self::PROJECTS_HOSTS_FILE . "'");
+        $hosts_file = self::PROJECTS_HOSTS_FILE;
+        $hosts_file_content = json_encode($hosts);
+        if(!file_exists($hosts_file) || md5($hosts_file_content) !== md5_file($hosts_file)){
+            $this->output->writeInfo("Writing hosts file");
+            if(!file_put_contents($hosts_file, $hosts_file_content)){
+                $this->output->writeError("Unable to write hosts file '" . $hosts_file . "'");
+            }
         }
 
         # Write projects catalog file
-        $this->output->writeInfo("Writing '" . self::PROJECTS_CATALOG_FILE . "'");
-        if(!file_put_contents(self::PROJECTS_CATALOG_FILE, json_encode(array_merge($projects['leave'], $projects['modify'], $projects['create'])))){
-            $this->output->writeError("Unable to write '" . self::PROJECTS_CATALOG_FILE . "'");
+        $projects_file = self::PROJECTS_CATALOG_FILE;
+        $projects_file_content = json_encode(array_merge($projects['skip'], $projects['check'], $projects['modify'], $projects['create']));
+        if(!file_exists($projects_file) || md5($projects_file_content) !== md5_file($projects_file)){
+            $this->output->writeInfo("Writing projects catalog file");
+            if(!file_put_contents($projects_file, $projects_file_content)){
+                $this->output->writeError("Unable to write projects catalog file '" . $projects_file . "'");
+            }
         }
+    }
+
+    protected function __projectNeedsCheck($id, $project){
+
+        // Re-check if php::builds config has been changed
+        if(!empty($project['vhost']) && !empty($project['php'])){
+            return Config::hasChanges('php::builds');
+        }
+
+        return false;
     }
 }

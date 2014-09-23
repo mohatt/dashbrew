@@ -26,11 +26,7 @@ class ProjectsProcessTask extends Task {
 
         $projects = Registry::get('projects');
 
-        if(count($projects['modify']) == 0 && count($projects['create']) == 0 && count($projects['delete']) == 0){
-            return;
-        }
-
-        foreach(['modify', 'create', 'delete'] as $action){
+        foreach(['check', 'modify', 'create', 'delete'] as $action){
             foreach($projects[$action] as $id => $project){
                 if(!empty($project['vhost'])){
                     $this->processVhost($action, $id, $project);
@@ -40,6 +36,18 @@ class ProjectsProcessTask extends Task {
     }
 
     protected function processVhost($action, $id, $project) {
+
+        static $verbs;
+
+        if(null === $verbs){
+            $verbs = [
+                'delete' => ['Removing', 'remove'],
+                'modify' => ['Updating', 'update'],
+                'create' => ['Writing', 'write'],
+            ];
+
+            $verbs['check'] = $verbs['modify'];
+        }
 
         $fs = Util::getFilesystem();
         $vhost = $project['vhost'];
@@ -56,20 +64,26 @@ class ProjectsProcessTask extends Task {
             'php-fpm'         => '',
         ], $vhost);
 
-        $vhost_file_path = "/etc/apache2/sites-enabled/{$id}.conf";
-        $vhost_ssl_file_path = "/etc/apache2/sites-enabled/{$id}-ssl.conf";
+        $vhost_file = "/etc/apache2/sites-enabled/{$id}.conf";
+        $vhost_ssl_file = "/etc/apache2/sites-enabled/{$id}-ssl.conf";
 
         if($action == 'delete'){
-            $this->output->writeInfo("Removing apache vhost for '$id'");
-            $fs->remove($vhost_file_path);
-            $this->output->writeInfo("Removing apache ssl vhost for '$id'");
-            $fs->remove($vhost_ssl_file_path);
+            if(file_exists($vhost_file)){
+                $this->output->writeInfo("$verbs[$action][0] apache vhost for '$id'");
+                $fs->remove($vhost_file);
+            }
+
+            if(file_exists($vhost_ssl_file)){
+                $this->output->writeInfo("$verbs[$action][0] apache ssl vhost for '$id'");
+                $fs->remove($vhost_ssl_file);
+            }
+
             return;
         }
 
-        if($action == 'modify' && !$vhost['ssl']){
-            $this->output->writeInfo("Removing apache ssl vhost for '$id'");
-            $fs->remove($vhost_ssl_file_path);
+        if(!$vhost['ssl'] && file_exists($vhost_ssl_file)){
+            $this->output->writeInfo("$verbs[delete][0] apache ssl vhost for '$id'");
+            $fs->remove($vhost_ssl_file);
         }
 
         // Defauly vhost directory
@@ -84,25 +98,8 @@ class ProjectsProcessTask extends Task {
             ]];
         }
 
-        $phps = Util::getInstalledPhps();
-        $phps_config = Config::get('php::builds');
         if(!empty($project['php'])){
-            $php_version = $project['php'];
-            $php_version_fpm_conf = '/etc/apache2/php/php-' . $php_version . '-fpm.conf';
-            if(!in_array('php-' . $php_version, $phps) || !isset($phps_config[$php_version])){
-                $this->output->writeError("Unable to use php version '$php_version' for project '$id', php isn't installed");
-            }
-            else if(empty($phps_config[$php_version]['fpm']['port'])){
-                $this->output->writeError("Unable to use php version '$php_version' for project '$id', php-fpm port isn't configured");
-            }
-            else if(!file_exists($php_version_fpm_conf)){
-                $this->output->writeError("Unable to use php version '$php_version' for project '$id', apache php-fpm config file '$php_version_fpm_conf' doesn't exist");
-            }
-            else {
-                $vhost['includes'] = [
-                    $php_version_fpm_conf
-                ];
-            }
+            $vhost = $this->__set_vhost_fpm_include($id, $project, $vhost);
         }
 
         foreach($vhost['directories'] as $key => $dir){
@@ -122,16 +119,23 @@ class ProjectsProcessTask extends Task {
         $vhost['access_log'] = "/var/log/apache2/vhost-{$id}.access.log";
         $vhost['error_log'] = "/var/log/apache2/vhost-{$id}.error.log";
 
-        $this->output->writeInfo("Writing apache vhost file for '$id'");
         $vhost = $this->__replace_vhost_vars($vhost, $project['_path']);
-        $vhost_file = Util::renderTemplate('apache/vhost.php', [
+        $vhost_file_content = Util::renderTemplate('apache/vhost.php', [
             'vhost'              => $vhost,
             '_project_id'        => $id,
             '_project_file_path' => $project['_path'],
         ], false);
 
-        if(!file_put_contents($vhost_file_path, $vhost_file)){
-            $this->output->writeError("Unable to write '$vhost_file_path'");
+        $vhost_file_save = false;
+        if(!file_exists($vhost_file) || md5($vhost_file_content) !== md5_file($vhost_file)){
+            $vhost_file_save = true;
+        }
+
+        if($vhost_file_save){
+            $this->output->writeInfo("$verbs[$action][0] apache vhost file for '$id'");
+            if(!file_put_contents($vhost_file, $vhost_file_content)){
+                $this->output->writeError("Unable to $verbs[$action][1] apache vhost file '$vhost_file'");
+            }
         }
 
         if($vhost['ssl']){
@@ -141,18 +145,76 @@ class ProjectsProcessTask extends Task {
             $vhost_ssl['access_log'] = "/var/log/apache2/vhost-{$id}-ssl.access.log";
             $vhost_ssl['error_log'] = "/var/log/apache2/vhost-{$id}-ssl.error.log";
 
-            $this->output->writeInfo("Writing apache ssl vhost file for '$id'");
-            $vhost_ssl_file = Util::renderTemplate('apache/vhost.php', [
+            $vhost_ssl_file_content = Util::renderTemplate('apache/vhost.php', [
                 'vhost'              => $vhost_ssl,
                 '_project_id'        => $id,
                 '_project_file_path' => $project['_path'],
             ], false);
 
-            if(!file_put_contents($vhost_ssl_file_path, $vhost_ssl_file)){
-                $this->output->writeError("Unable to write '$vhost_ssl_file_path'");
+            $vhost_ssl_file_save = false;
+            if(!file_exists($vhost_ssl_file) || md5($vhost_ssl_file_content) !== md5_file($vhost_ssl_file)){
+                $vhost_ssl_file_save = true;
+            }
+
+            if($vhost_ssl_file_save){
+                $this->output->writeInfo("$verbs[$action][0] apache ssl vhost file for '$id'");
+                if(!file_put_contents($vhost_ssl_file, $vhost_ssl_file_content)){
+                    $this->output->writeError("Unable to $verbs[$action][1] apache ssl vhost file '$vhost_ssl_file'");
+                }
+            }
+        }
+    }
+
+    protected function __set_vhost_fpm_include($id, $project, $vhost) {
+
+        static $default_php_version;
+
+        $phps_config = Config::get('php::builds');
+        // set default php version if not set
+        if(null === $default_php_version){
+            foreach($phps_config as $version => $meta){
+                if(!empty($meta['default'])){
+                    $default_php_version = $version;
+                }
+            }
+
+            if(null === $default_php_version){
+                $default_php_version = 0;
             }
         }
 
+        $php_version = $project['php'];
+        if($php_version == 'default' && 0 === $default_php_version){
+            $this->output->writeError("Unable to use default php version for project '$id', no default php version found");
+            return $vhost;
+        }
+
+        if($php_version == 'default'){
+            $php_version = $default_php_version;
+        }
+
+        $phps_installed = Util::getInstalledPhps();
+        if(!in_array('php-' . $php_version, $phps_installed) || !isset($phps_config[$php_version])){
+            $this->output->writeError("Unable to use php version '$php_version' for project '$id', php version isn't installed");
+            return $vhost;
+        }
+
+        if(empty($phps_config[$php_version]['fpm']['port'])){
+            $this->output->writeError("Unable to use php version '$php_version' for project '$id', php fpm port isn't configured");
+            return $vhost;
+        }
+
+        $php_version_fpm_conf = '/etc/apache2/php/php-' . $php_version . '-fpm.conf';
+        if(!file_exists($php_version_fpm_conf)){
+            $this->output->writeError("Unable to use php version '$php_version' for project '$id', apache php-fpm config file '$php_version_fpm_conf' doesn't exist");
+            return $vhost;
+        }
+
+        $vhost['includes'] = [
+            $php_version_fpm_conf
+        ];
+
+        return $vhost;
     }
 
     protected function __replace_vhost_vars($vhost, $project_file_path) {
