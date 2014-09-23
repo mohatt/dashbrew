@@ -63,6 +63,10 @@ class Config {
         }
 
         if($key !== null){
+            if(!isset(self::$configOld[$key])){
+                return null;
+            }
+
             return self::$configOld[$key];
         }
 
