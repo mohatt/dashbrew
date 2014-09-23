@@ -184,10 +184,6 @@ class PhpTask extends Task {
         ], true);
 
         if(!file_exists($apache_conf_file) || md5($apache_conf_template) !== md5_file($apache_conf_file)){
-            if(!file_exists(dirname($apache_conf_file))){
-                $fs->mkdir(dirname($apache_conf_file));
-            }
-
             $this->output->writeInfo("Writing $apache_conf_file");
             if(!file_put_contents($apache_conf_file, $apache_conf_template)){
                 throw new \Exception("Failed writing apache php-fpm config file $apache_conf_file");
@@ -216,12 +212,9 @@ class PhpTask extends Task {
     protected function runScript() {
 
         $args = func_get_args();
-        if(sizeof($args) == 0){
-            throw new \Exception("No script to run");
-        }
-
-        if(sizeof($args) == 1){
-            throw new \Exception("runScript() function requires at lease two arguments, 1 was given");
+        $args_size = func_num_args();
+        if($args_size < 2){
+            throw new \Exception("runScript() function requires at lease two arguments, $args_size was given");
         }
 
         $script = array_shift($args);
