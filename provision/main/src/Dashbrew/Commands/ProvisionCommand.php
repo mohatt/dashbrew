@@ -6,6 +6,7 @@ use Dashbrew\Command\Command;
 use Dashbrew\Input\InputInterface;
 use Dashbrew\Output\OutputInterface;
 use Dashbrew\Task\Runner as TaskRunner;
+use Dashbrew\Tasks\InitialSetupTask;
 use Dashbrew\Tasks\InitTask;
 use Dashbrew\Tasks\ConfigDefaultsTask;
 use Dashbrew\Tasks\ConfigSyncTask;
@@ -50,6 +51,7 @@ class ProvisionCommand extends Command {
 
         $runner = new TaskRunner($this, $input, $output);
 
+        $runner->addTask(new InitialSetupTask);
         $runner->addTask(new InitTask);
         $runner->addTask(new ConfigDefaultsTask);
         $runner->addTask(new ConfigSyncTask);
