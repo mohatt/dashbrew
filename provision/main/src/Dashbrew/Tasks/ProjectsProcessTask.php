@@ -69,12 +69,12 @@ class ProjectsProcessTask extends Task {
 
         if($action == 'delete'){
             if(file_exists($vhost_file)){
-                $this->output->writeInfo("$verbs[$action][0] apache vhost for '$id'");
+                $this->output->writeInfo("{$verbs[$action][0]} apache vhost for '$id'");
                 $fs->remove($vhost_file);
             }
 
             if(file_exists($vhost_ssl_file)){
-                $this->output->writeInfo("$verbs[$action][0] apache ssl vhost for '$id'");
+                $this->output->writeInfo("{$verbs[$action][0]} apache ssl vhost for '$id'");
                 $fs->remove($vhost_ssl_file);
             }
 
@@ -82,7 +82,7 @@ class ProjectsProcessTask extends Task {
         }
 
         if(!$vhost['ssl'] && file_exists($vhost_ssl_file)){
-            $this->output->writeInfo("$verbs[delete][0] apache ssl vhost for '$id'");
+            $this->output->writeInfo("{$verbs['delete'][0]} apache ssl vhost for '$id'");
             $fs->remove($vhost_ssl_file);
         }
 
@@ -132,9 +132,9 @@ class ProjectsProcessTask extends Task {
         }
 
         if($vhost_file_save){
-            $this->output->writeInfo("$verbs[$action][0] apache vhost file for '$id'");
+            $this->output->writeInfo("{$verbs[$action][0]} apache vhost file for '$id'");
             if(!file_put_contents($vhost_file, $vhost_file_content)){
-                $this->output->writeError("Unable to $verbs[$action][1] apache vhost file '$vhost_file'");
+                $this->output->writeError("Unable to {$verbs[$action][1]} apache vhost file '$vhost_file'");
             }
         }
 
@@ -157,9 +157,9 @@ class ProjectsProcessTask extends Task {
             }
 
             if($vhost_ssl_file_save){
-                $this->output->writeInfo("$verbs[$action][0] apache ssl vhost file for '$id'");
+                $this->output->writeInfo("{$verbs[$action][0]} apache ssl vhost file for '$id'");
                 if(!file_put_contents($vhost_ssl_file, $vhost_ssl_file_content)){
-                    $this->output->writeError("Unable to $verbs[$action][1] apache ssl vhost file '$vhost_ssl_file'");
+                    $this->output->writeError("Unable to {$verbs[$action][1]} apache ssl vhost file '$vhost_ssl_file'");
                 }
             }
         }
