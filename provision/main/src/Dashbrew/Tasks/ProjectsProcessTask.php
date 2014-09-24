@@ -25,9 +25,8 @@ class ProjectsProcessTask extends Task {
         }
 
         $projects = Registry::get('projects');
-
-        foreach(['check', 'modify', 'create', 'delete'] as $action){
-            foreach($projects[$action] as $id => $project){
+        foreach($projects as $action => $action_projects){
+            foreach($action_projects as $id => $project){
                 if(!empty($project['vhost'])){
                     $this->processVhost($action, $id, $project);
                 }
@@ -44,29 +43,42 @@ class ProjectsProcessTask extends Task {
                 'delete' => ['Removing', 'remove'],
                 'modify' => ['Updating', 'update'],
                 'create' => ['Writing', 'write'],
+                'skip'   => ['Skipping'],
             ];
 
             $verbs['check'] = $verbs['modify'];
         }
 
-        $fs = Util::getFilesystem();
-        $vhost = $project['vhost'];
         $vhost = array_merge([
             'docroot'         => '${dir}',
             'servername'      => $id,
             'options'         => ['Indexes','FollowSymLinks','MultiViews'],
-            'override'        => ['None'],
+            'override'        => ['All'],
             'directoryindex'  => '',
             'ssl'             => false,
             'ssl_cert'        => '/etc/ssl/certs/ssl-cert-snakeoil.pem',
             'ssl_key'         => '/etc/ssl/private/ssl-cert-snakeoil.key',
             'ssl_certs_dir'   => '/etc/ssl/certs',
             'php-fpm'         => '',
-        ], $vhost);
+        ], $project['vhost']);
 
         $vhost_file = "/etc/apache2/sites-enabled/{$id}.conf";
         $vhost_ssl_file = "/etc/apache2/sites-enabled/{$id}-ssl.conf";
 
+        if($action == 'skip'){
+            if((!file_exists($vhost_file) || ($vhost['ssl'] && !file_exists($vhost_ssl_file)))){
+                $action = 'create';
+            }
+            else {
+                $this->output->writeDebug("{$verbs[$action][0]} apache vhost for '$id'");
+                if($vhost['ssl']){
+                    $this->output->writeDebug("{$verbs[$action][0]} apache ssl vhost for '$id'");
+                }
+                return;
+            }
+        }
+
+        $fs = Util::getFilesystem();
         if($action == 'delete'){
             if(file_exists($vhost_file)){
                 $this->output->writeInfo("{$verbs[$action][0]} apache vhost for '$id'");
@@ -99,7 +111,7 @@ class ProjectsProcessTask extends Task {
         }
 
         if(!empty($project['php'])){
-            $vhost = $this->__set_vhost_fpm_include($id, $project, $vhost);
+            $vhost = $this->__setVhostFpmInclude($id, $project, $vhost);
         }
 
         foreach($vhost['directories'] as $key => $dir){
@@ -119,7 +131,7 @@ class ProjectsProcessTask extends Task {
         $vhost['access_log'] = "/var/log/apache2/vhost-{$id}.access.log";
         $vhost['error_log'] = "/var/log/apache2/vhost-{$id}.error.log";
 
-        $vhost = $this->__replace_vhost_vars($vhost, $project['_path']);
+        $vhost = $this->__replaceVhostVars($vhost, $project['_path']);
         $vhost_file_content = Util::renderTemplate('apache/vhost.php', [
             'vhost'              => $vhost,
             '_project_id'        => $id,
@@ -136,6 +148,9 @@ class ProjectsProcessTask extends Task {
             if(!file_put_contents($vhost_file, $vhost_file_content)){
                 $this->output->writeError("Unable to {$verbs[$action][1]} apache vhost file '$vhost_file'");
             }
+        }
+        else {
+            $this->output->writeDebug("{$verbs['skip'][0]} {$verbs[$action][0]} apache vhost for '$id'");
         }
 
         if($vhost['ssl']){
@@ -162,10 +177,13 @@ class ProjectsProcessTask extends Task {
                     $this->output->writeError("Unable to {$verbs[$action][1]} apache ssl vhost file '$vhost_ssl_file'");
                 }
             }
+            else {
+                $this->output->writeDebug("{$verbs['skip'][0]} {$verbs[$action][0]} apache ssl vhost for '$id'");
+            }
         }
     }
 
-    protected function __set_vhost_fpm_include($id, $project, $vhost) {
+    protected function __setVhostFpmInclude($id, $project, $vhost) {
 
         static $default_php_version;
 
@@ -217,7 +235,7 @@ class ProjectsProcessTask extends Task {
         return $vhost;
     }
 
-    protected function __replace_vhost_vars($vhost, $project_file_path) {
+    protected function __replaceVhostVars($vhost, $project_file_path) {
 
         $vars = [
             'dir' => str_replace('/vagrant/public', '/var/www', dirname($project_file_path)),
@@ -246,5 +264,4 @@ class ProjectsProcessTask extends Task {
 
         return $vhost;
     }
-
 }
