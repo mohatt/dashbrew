@@ -78,7 +78,7 @@ class ConfigDefaultsTask extends Task {
 
             $this->output->writeInfo("Writing default config dir '$target_dir'");
             $finder = new Finder;
-            foreach($finder->files()->in($source_dir)->depth('== 0') as $origin_dir_file){
+            foreach($finder->files()->in($source_dir)->ignoreDotFiles(false)->depth('== 0') as $origin_dir_file){
                 $origin_dir_filename = $origin_dir_file->getFilename();
 
                 $target_dir_filepath = $target_dir . '/' . $origin_dir_filename;

@@ -104,7 +104,7 @@ class ConfigSyncTask extends Task {
             }
 
             $finder = new Finder;
-            foreach($finder->files()->in($source_dir)->depth('== 0') as $source_dir_file){
+            foreach($finder->files()->in($source_dir)->ignoreDotFiles(false)->depth('== 0') as $source_dir_file){
                 $source_dir_filename = $source_dir_file->getFilename();
 
                 $source_dir_filepath = $source_dir . '/' . $source_dir_filename;
@@ -152,7 +152,7 @@ class ConfigSyncTask extends Task {
             }
 
             $finder = new Finder;
-            foreach($finder->files()->in($target_dir)->depth('== 0') as $target_dir_file){
+            foreach($finder->files()->in($target_dir)->ignoreDotFiles(false)->depth('== 0') as $target_dir_file){
                 $target_dir_filename = $target_dir_file->getFilename();
 
                 $source_dir_filepath = $source_dir . '/' . $target_dir_filename;

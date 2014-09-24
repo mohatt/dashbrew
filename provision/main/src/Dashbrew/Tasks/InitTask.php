@@ -84,6 +84,13 @@ class InitTask extends Task {
 
         $config_dirs = [
             [
+                'path'    => '/home/vagrant',
+                'source'  => '/vagrant/config/home',
+                'default' => '/home/vagrant',
+                'owner'   => 'vagrant',
+                'group'   => 'vagrant',
+            ],
+            [
                 'path'    => '/etc/monit/conf.d',
                 'source'  => '/vagrant/config/monit/conf.d',
                 'default' => '/vagrant/provision/main/config/monit/conf.d',
