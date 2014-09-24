@@ -10,6 +10,7 @@ use Dashbrew\Tasks\InitialSetupTask;
 use Dashbrew\Tasks\InitTask;
 use Dashbrew\Tasks\ConfigDefaultsTask;
 use Dashbrew\Tasks\ConfigSyncTask;
+use Dashbrew\Tasks\PackagesTask;
 use Dashbrew\Tasks\PhpTask;
 use Dashbrew\Tasks\ProjectsInitTask;
 use Dashbrew\Tasks\ProjectsProcessTask;
@@ -53,6 +54,7 @@ class ProvisionCommand extends Command {
 
         $runner->addTask(new InitialSetupTask);
         $runner->addTask(new InitTask);
+        $runner->addTask(new PackagesTask);
         $runner->addTask(new ConfigDefaultsTask);
         $runner->addTask(new ConfigSyncTask);
         $runner->addTask(new PhpTask);
