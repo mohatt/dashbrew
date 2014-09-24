@@ -219,14 +219,12 @@ class PhpTask extends Task {
 
         $script = array_shift($args);
         $send_output = array_shift($args);
-        $process = new Process("sudo -u vagrant bash /vagrant/provision/main/scripts/$script " . implode(" ", $args), null, null, null, null);
-        $process->run(function ($type, $buffer) use($send_output) {
-            if($send_output){
-                $this->output->write($buffer);
-            }
-        });
 
-        if ($process->isSuccessful()) {
+        $script_path = "/vagrant/provision/main/scripts/$script";
+        $script_args = implode(" ", $args);
+
+        $success = Util::Process("sudo -u vagrant bash $script_path $script_args", $this->output, $send_output, null);
+        if ($success) {
             return true;
         }
 

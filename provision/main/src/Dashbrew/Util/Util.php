@@ -1,6 +1,7 @@
 <?php
 
 namespace Dashbrew\Util;
+use Symfony\Component\Process\Process;
 
 /**
  * Util Class.
@@ -49,37 +50,68 @@ class Util {
      */
     public static function getInstalledPhps() {
 
-        $reg_key = 'installed_phps';
-        if(!Registry::check($reg_key)){
+        static $phps;
+
+        if(!isset($phps)){
             $phps = [];
             $finder = new Finder;
             $finder->directories()->in('/opt/phpbrew/php')->depth('== 0');
             foreach ($finder as $file) {
                 $phps[] = $file->getFilename();
             }
-
-            Registry::set($reg_key, $phps);
         }
 
-        return Registry::get($reg_key);
+        return $phps;
     }
 
-    public static function exec($command, &$output = null) {
+    public static function exec($command, $silent = false, &$output = null, &$return_var = null) {
 
-        $lastLine = exec($command, $output, $returnValue);
+        $output = null;
+        $return_var = null;
 
-        if ($returnValue != 0) {
+        // Excute the command
+        $last_line = exec($command, $output, $return_var);
+
+        // Check if successfull
+        if ($return_var != 0 && !$silent) {
             throw new \Exception("Command execution failed: $command\n" . implode("\n", $output));
         }
 
-        return $lastLine;
+        return $return_var;
+    }
+
+    public static function process($command, $output, $force_output = false, $timeout = 60, $input = null, array $env = null, $cwd = null) {
+
+        $process = new Process($command, null, $env, $input, $timeout);
+        $process->run(function ($type, $buffer) use($output, $force_output) {
+            if($type === Process::ERR){
+                $output->writeStderr($buffer);
+                return;
+            }
+
+            $buffer = trim($buffer, "\n");
+            if(empty($buffer)){
+                return;
+            }
+
+            if($output->isDebug() || $force_output){
+                $output->writeStdout($buffer);
+                return;
+            }
+        });
+
+        if (!$process->isSuccessful()) {
+            return false;
+        }
+
+        return true;
     }
 
     public static function augeas($lns, $file, $key, $value) {
 
         $command = "augtool --autosave --noautoload --transform '$lns incl $file' set '/files/$file/$key' '$value'";
 
-        self::exec($command, $output);
+        self::exec($command, false, $output);
 
         $output = implode(" ", $output);
         if(false === strpos($output, 'Saved 1')){

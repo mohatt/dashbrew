@@ -9,9 +9,11 @@ namespace Dashbrew\Output;
  */
 interface OutputInterface extends \Symfony\Component\Console\Output\ConsoleOutputInterface {
 
-    const PREFIX_INFO   = "Info";
-    const PREFIX_DEBUG  = "Debug";
-    const PREFIX_ERROR  = "Error";
+    const PREFIX_INFO    = "Info";
+    const PREFIX_DEBUG   = "Debug";
+    const PREFIX_ERROR   = "Error";
+    const PREFIX_STDOUT  = "Stdout";
+    const PREFIX_STDERR  = "Stderr";
 
     /**
      * @param string $message
