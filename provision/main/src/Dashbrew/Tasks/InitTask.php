@@ -3,6 +3,7 @@
 namespace Dashbrew\Tasks;
 
 use Dashbrew\Commands\ProvisionCommand;
+use Dashbrew\Output\Output;
 use Dashbrew\Task\Task;
 use Dashbrew\Util\Util;
 use Dashbrew\Util\Config;
@@ -28,6 +29,10 @@ class InitTask extends Task {
         // Parse & initialize config.yaml file
         $this->output->writeInfo("Initializing config.yaml");
         Config::init();
+
+        if(Config::get('debug')){
+            $this->output->setVerbosity(Output::VERBOSITY_DEBUG);
+        }
 
         // Initialize config files and directories
         $this->output->writeDebug("Initializing config files");
