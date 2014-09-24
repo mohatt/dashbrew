@@ -48,7 +48,7 @@ class InitTask extends Task {
             [
                 'path'    => '/etc/apache2/apache2.conf',
                 'source'  => '/vagrant/config/apache/apache.conf',
-                'default' => '/vagrant/provision/main/config/apache2/apache2.conf',
+                'default' => '/etc/apache2/apache2.conf',
                 'owner'   => 'root',
                 'group'   => 'root',
             ],
@@ -76,8 +76,8 @@ class InitTask extends Task {
             [
                 'path'    => '/opt/pma/config.inc.php',
                 'source'  => '/vagrant/config/pma/config.inc.php',
-                'default' => '/vagrant/provision/main/config/pma/config.inc.php',
-                'owner'   => 'www-data',
+                'default' => '/opt/pma/config.inc.php',
+                'owner'   => 'vagrant',
                 'group'   => 'www-data',
             ],
         ];
