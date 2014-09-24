@@ -16,7 +16,7 @@ class Output extends ConsoleOutput implements OutputInterface {
      */
     public function writeInfo($message) {
 
-        return $this->writeWithPrefix($this, $message, self::PREFIX_INFO);
+        return $this->writeWithPrefix($this, $message, self::PREFIX_INFO, true);
     }
 
     /**
@@ -28,7 +28,7 @@ class Output extends ConsoleOutput implements OutputInterface {
             return;
         }
 
-        return $this->writeWithPrefix($this, $message, self::PREFIX_DEBUG);
+        return $this->writeWithPrefix($this, $message, self::PREFIX_DEBUG, true);
     }
 
     /**
@@ -36,14 +36,30 @@ class Output extends ConsoleOutput implements OutputInterface {
      */
     public function writeError($message) {
 
-        return $this->writeWithPrefix($this->getErrorOutput(), $message, self::PREFIX_ERROR);
+        return $this->writeWithPrefix($this->getErrorOutput(), $message, self::PREFIX_ERROR, true);
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function writeWithPrefix($output, $message, $prefix) {
+    public function writeStdout($message) {
 
-        return $output->writeln("[$prefix] $message", self::OUTPUT_NORMAL);
+        return $this->writeWithPrefix($this, $message, self::PREFIX_STDOUT, false);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function writeStderr($message) {
+
+        return $this->writeWithPrefix($this->getErrorOutput(), $message, self::PREFIX_STDERR, false);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function writeWithPrefix($output, $message, $prefix, $newline = false) {
+
+        return $output->write("[$prefix] $message", $newline, self::OUTPUT_NORMAL);
     }
 }
