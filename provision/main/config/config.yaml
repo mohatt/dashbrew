@@ -1,0 +1,52 @@
+---
+#
+# OS Packages
+#
+# Packages to install via the OS package manager (apt-get).
+#
+os::packages:
+  vim: true
+
+#
+# PHP Builds
+#
+# A hash containing a list of PHP versions and their configurations
+#  to be managed by phpbrew.
+#
+php::builds:
+  5.6.0:
+    installed: true
+    default: true
+    variants: +dev
+    extensions:
+      xdebug:
+        enabled: true
+        version: stable
+      xhprof:
+        enabled: true
+        version: latest
+    fpm:
+      port: 9001
+
+#
+# Apache Modules
+#
+# Apache modules to install and enable.
+#
+apache::modules:
+  rewrite: true
+
+#
+# Nodejs Modules
+#
+# Nodejs Modules to install via npm.
+#
+npm::packages:
+  grunt-cli: true
+
+#
+# Debug mode
+#
+# Enables extra information during provisioning
+#
+debug: true
