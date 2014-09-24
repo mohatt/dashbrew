@@ -32,6 +32,7 @@ class Config {
 
         if($fs->exists(self::CONFIG_FILE_TEMP)){
             self::$configOld = $yaml->parse(file_get_contents(self::CONFIG_FILE_TEMP));
+            self::$config    = self::mergeOldConfig();
         }
     }
 
@@ -97,5 +98,46 @@ class Config {
     public static function writeTemp() {
 
         return Util::getFilesystem()->copy(self::CONFIG_FILE, self::CONFIG_FILE_TEMP, true, 'vagrant');
+    }
+
+    protected static function mergeOldConfig() {
+
+        $config = self::$config;
+        foreach(self::$configOld as $mkey => $mvalue){
+            if(!is_array($mvalue)){
+                continue;
+            }
+
+            foreach($mvalue as $key => $value){
+                if(isset($config[$mkey][$key])){
+                    continue;
+                }
+
+                switch($mkey){
+                    case 'os::packages':
+                        if($value){
+                            $config[$mkey][$key] = false;
+                        }
+                        break;
+                    case 'php::builds':
+                        if(!isset($value['installed']) || !$value['installed']){
+                            $config[$mkey][$key]['installed'] = false;
+                        }
+                        break;
+                    case 'apache::modules':
+                        if($value){
+                            $config[$mkey][$key] = false;
+                        }
+                        break;
+                    case 'npm::packages':
+                        if($value){
+                            $config[$mkey][$key] = false;
+                        }
+                        break;
+                }
+            }
+        }
+
+        return $config;
     }
 }
