@@ -47,7 +47,7 @@ class InitTask extends Task {
             ],
             [
                 'path'    => '/etc/apache2/apache2.conf',
-                'source'  => '/vagrant/config/apache2/apache2.conf',
+                'source'  => '/vagrant/config/apache/apache.conf',
                 'default' => '/vagrant/provision/main/config/apache2/apache2.conf',
                 'owner'   => 'root',
                 'group'   => 'root',
