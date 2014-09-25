@@ -54,7 +54,7 @@ class PhpTask extends Task {
             }
 
             $this->output->writeInfo("Removing php");
-            $proc = $this->runScript('phpbrew.php.remove.sh', true, $meta['_version']);
+            $proc = $this->runScript('php.remove', true, $meta['_version']);
             if($proc->isSuccessful()){
                 $this->output->writeInfo("Successfully removed php");
             }
@@ -75,7 +75,7 @@ class PhpTask extends Task {
         }
 
         $this->output->writeInfo("Building php");
-        $proc = $this->runScript('phpbrew.php.install.sh', true, $meta['_version'], $meta['variants']);
+        $proc = $this->runScript('php.install', true, $meta['_version'], $meta['variants']);
         if($proc->isSuccessful()){
             $this->output->writeInfo("Successfully built php");
         }
@@ -106,7 +106,7 @@ class PhpTask extends Task {
             $ext_installed = file_exists($ini) || file_exists($ini_disabled);
             if(!$ext_installed || (isset($meta['_old']['extensions'][$extname]['version']) && $meta['_old']['extensions'][$extname]['version'] !== $extmeta['version'])){
                 $this->output->writeInfo("Installing $extname extension");
-                $proc = $this->runScript('phpbrew.ext.install.sh', true, $meta['_version'], $extname);
+                $proc = $this->runScript('ext.install', true, $meta['_version'], $extname);
                 if($proc->isSuccessful()){
                     $this->output->writeInfo("Successfully installed $extname extension");
                 }
@@ -118,7 +118,7 @@ class PhpTask extends Task {
             $ext_enabled = file_exists($ini);
             if($extmeta['enabled'] && !$ext_enabled){
                 $this->output->writeInfo("Enabling $extname extension");
-                $proc = $this->runScript('phpbrew.ext.enable.sh', null, $meta['_version'], $extname);
+                $proc = $this->runScript('ext.enable', null, $meta['_version'], $extname);
                 if($proc->isSuccessful()){
                     $this->output->writeInfo("Successfully enabled $extname extension");
                 }
@@ -129,7 +129,7 @@ class PhpTask extends Task {
 
             if (!$extmeta['enabled'] && $ext_enabled){
                 $this->output->writeInfo("Disabling $extname extension");
-                $proc = $this->runScript('phpbrew.ext.disable.sh', null, $meta['_version'], $extname);
+                $proc = $this->runScript('ext.disable', null, $meta['_version'], $extname);
                 if($proc->isSuccessful()){
                     $this->output->writeInfo("Successfully disabled $extname extension");
                 }
@@ -153,8 +153,16 @@ class PhpTask extends Task {
         $apache_conf_file = "/etc/apache2/php/php-$meta[_version]-fpm.conf";
 
         if(empty($meta['fpm']['port']) || (isset($meta['installed']) && !$meta['installed'])){
-            $fs->remove($monit_conf_file);
-            $fs->remove($apache_conf_file);
+            if(file_exists($monit_conf_file)){
+                $this->output->writeInfo("Removing monit php-fpm config file '$monit_conf_file'");
+                $fs->remove($monit_conf_file);
+            }
+
+            if(file_exists($apache_conf_file)){
+                $this->output->writeInfo("Removing apache php-fpm config file '$apache_conf_file'");
+                $fs->remove($apache_conf_file);
+            }
+
             return;
         }
 
@@ -175,13 +183,8 @@ class PhpTask extends Task {
         ], true);
 
         if(!file_exists($monit_conf_file) || md5($monit_conf_template) !== md5_file($monit_conf_file)){
-            $this->output->writeInfo("Writing $monit_conf_file");
-            if(!file_put_contents($monit_conf_file, $monit_conf_template)){
-                throw new \Exception("Failed writing monit php-fpm config file $monit_conf_file");
-            }
-
-            $fs->chown($monit_conf_file, 'root');
-            $fs->chgrp($monit_conf_file, 'root');
+            $this->output->writeInfo("Writing monit php-fpm config file '$monit_conf_file'");
+            $fs->write($monit_conf_file, $monit_conf_template, 'root');
         }
 
         $apache_conf_template = Util::renderTemplate('apache/php/php-fpm.conf.template', [
@@ -190,19 +193,14 @@ class PhpTask extends Task {
         ], true);
 
         if(!file_exists($apache_conf_file) || md5($apache_conf_template) !== md5_file($apache_conf_file)){
-            $this->output->writeInfo("Writing $apache_conf_file");
-            if(!file_put_contents($apache_conf_file, $apache_conf_template)){
-                throw new \Exception("Failed writing apache php-fpm config file $apache_conf_file");
-            }
-
-            $fs->chown($apache_conf_file, 'root');
-            $fs->chgrp($apache_conf_file, 'root');
+            $this->output->writeInfo("Writing apache php-fpm config file '$apache_conf_file'");
+            $fs->write($apache_conf_file, $apache_conf_template, 'root');
         }
     }
 
     protected function setDefaultPhp($version) {
 
-        $proc = $this->runScript('phpbrew.php.current.sh');
+        $proc = $this->runScript('php.current');
         if(!$proc->isSuccessful()){
             $this->output->writeError("Failed to get current php version");
             return;
@@ -220,16 +218,17 @@ class PhpTask extends Task {
 
         // Use system php
         if(null === $version){
-            $proc = $this->runScript('phpbrew.php.switch_sys.sh');
+            $proc = $this->runScript('php.switchoff');
             if(!$proc->isSuccessful()){
-                throw new \Exception("Unable to switch to system php");
+                $this->output->writeError("Unable to switch off phpbrew");
             }
+
             return;
         }
 
-        $proc = $this->runScript('phpbrew.php.switch.sh', null, $version);
+        $proc = $this->runScript('php.switch', null, $version);
         if(!$proc->isSuccessful()){
-            throw new \Exception("Unable to switch to php $version");
+            $this->output->writeError("Unable to switch to php $version");
         }
     }
 
@@ -251,7 +250,7 @@ class PhpTask extends Task {
             $force_stdout = array_shift($args);
         }
 
-        $cmd = "/vagrant/provision/main/scripts/$script";
+        $cmd = "/vagrant/provision/main/scripts/phpbrew/$script.sh";
         if(count($args) > 0){
             $cmd .= " " . implode(" ", $args);
         }
