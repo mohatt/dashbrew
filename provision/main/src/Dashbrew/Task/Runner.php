@@ -64,12 +64,12 @@ class Runner {
         foreach ($this->tasks as $task){
             $taskName = get_class($task);
 
-            $this->output->writeDebug("Running task {$taskName}");
+            $this->output->writeDebug("Running {$taskName}");
 
             $task->init($this->command, $this->input, $this->output);
             $task->run();
 
-            $this->output->writeDebug("Finished running task {$taskName}");
+            $this->output->writeDebug("Finished running {$taskName}");
         }
     }
 }
