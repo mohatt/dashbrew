@@ -45,6 +45,7 @@ class ProjectsInitTask extends Task {
         ];
 
         $yaml = Util::getYamlParser();
+        $fs   = Util::getFilesystem();
 
         $finder = new Finder;
         $finder->files()
@@ -161,9 +162,7 @@ class ProjectsInitTask extends Task {
         $hosts_file_content = json_encode($hosts);
         if(!file_exists($hosts_file) || md5($hosts_file_content) !== md5_file($hosts_file)){
             $this->output->writeInfo("Writing hosts file");
-            if(!file_put_contents($hosts_file, $hosts_file_content)){
-                $this->output->writeError("Unable to write hosts file '" . $hosts_file . "'");
-            }
+            $fs->write($hosts_file, $hosts_file_content, 'vagrant');
         }
 
         # Write projects catalog file
@@ -171,9 +170,7 @@ class ProjectsInitTask extends Task {
         $projects_file_content = json_encode(array_merge($projects['skip'], $projects['check'], $projects['modify'], $projects['create']));
         if(!file_exists($projects_file) || md5($projects_file_content) !== md5_file($projects_file)){
             $this->output->writeInfo("Writing projects catalog file");
-            if(!file_put_contents($projects_file, $projects_file_content)){
-                $this->output->writeError("Unable to write projects catalog file '" . $projects_file . "'");
-            }
+            $fs->write($projects_file, $projects_file_content, 'vagrant');
         }
     }
 

@@ -181,6 +181,6 @@ class ConfigSyncTask extends Task {
 
         // Write status file
         $this->output->writeDebug("Writing config directories sync status file");
-        file_put_contents(self::DIR_SYNC_STATUS_FILE, json_encode($sync_status_new));
+        $fs->write(self::DIR_SYNC_STATUS_FILE, json_encode($sync_status_new), 'vagrant');
     }
 }
