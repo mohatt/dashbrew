@@ -2,6 +2,7 @@
 
 namespace Dashbrew\Util;
 use Symfony\Component\Process\Process;
+use Dashbrew\Output\OutputInterface;
 
 /**
  * Util Class.
@@ -64,61 +65,96 @@ class Util {
         return $phps;
     }
 
+    /**
+     * @param string $command
+     * @param bool $silent
+     * @param null $output
+     * @param null $return_var
+     * @return bool
+     * @throws \Exception
+     */
     public static function exec($command, $silent = false, &$output = null, &$return_var = null) {
 
         $output = null;
         $return_var = null;
 
         // Excute the command
-        $last_line = exec($command, $output, $return_var);
+        exec($command, $output, $return_var);
 
         // Check if successfull
-        if ($return_var != 0 && !$silent) {
-            throw new \Exception("Command execution failed: $command\n" . implode("\n", $output));
+        if ($return_var !== 0 && !$silent) {
+            throw new \Exception("Command execution failed: $command\n Stdout:" . implode("\n", $output));
         }
 
-        return $return_var;
+        return 0 === $return_var;
     }
 
-    public static function process($command, $output, $force_output = false, $timeout = 60, $input = null, array $env = null, $cwd = null) {
+    /**
+     * @param string $command
+     * @param OutputInterface $output
+     * @param bool $disable_stderr
+     * @param null|bool $force_stdout can be set to `true` to disable stdout, `false` to
+     *  disable stdout or `null` to send stdout according to current verbosity level.
+     * @param int $timeout
+     * @param null $input
+     * @param array $env
+     * @param null $cwd
+     * @return Process
+     */
+    public static function process($command, OutputInterface $output, $disable_stderr = false, $force_stdout = null, $timeout = 60, $input = null, array $env = null, $cwd = null) {
+
+        $output->writeDebug(str_repeat('-', 55));
+        $output->writeDebug("Executing command: $command");
+        $output->writeDebug(str_repeat('-', 55));
 
         $process = new Process($command, null, $env, $input, $timeout);
-        $process->run(function ($type, $buffer) use($output, $force_output) {
+        $process->run(function ($type, $buffer) use($output, $disable_stderr, $force_stdout) {
             if($type === Process::ERR){
-                $output->writeStderr($buffer);
+                if(true !== $disable_stderr){
+                    $output->writeStderr($buffer);
+                }
+
                 return;
             }
 
             $buffer = trim($buffer, "\n");
-            if(empty($buffer)){
+            if(empty($buffer) || false === $force_stdout){
                 return;
             }
 
-            if($output->isDebug() || $force_output){
+            if($output->isDebug() || true === $force_stdout){
                 $output->writeStdout($buffer);
                 return;
             }
         });
 
-        if (!$process->isSuccessful()) {
-            return false;
-        }
+        $output->writeDebug(str_repeat('-', 55));
 
-        return true;
+        return $process;
     }
 
+    /**
+     * @param string $lns
+     * @param string $file
+     * @param string $key
+     * @param string $value
+     * @return int
+     * @throws \Exception
+     */
     public static function augeas($lns, $file, $key, $value) {
 
         $command = "augtool --autosave --noautoload --transform '$lns incl $file' set '/files/$file/$key' '$value'";
 
-        self::exec($command, false, $output);
-
-        $output = implode(" ", $output);
-        if(false === strpos($output, 'Saved 1')){
-            return false;
+        if(!self::exec($command, false, $output)){
+            return 0;
         }
 
-        return true;
+        $output = implode(" ", $output);
+        if(false !== stripos($output, 'saved 1')){
+            return 2;
+        }
+
+        return 1;
     }
 
     /**

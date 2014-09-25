@@ -32,9 +32,7 @@ class PhpTask extends Task {
             $meta['_old'] = isset($phpsOld[$version]) ? $phpsOld[$version] : [];
 
             $this->managePhp($meta);
-
             $this->manageExtensions($meta);
-
             $this->manageFpm($meta);
 
             if(!empty($meta['default'])){
@@ -56,7 +54,8 @@ class PhpTask extends Task {
             }
 
             $this->output->writeInfo("Removing php");
-            if($this->runScript('phpbrew.php.remove.sh', true, $meta['_version'])){
+            $proc = $this->runScript('phpbrew.php.remove.sh', true, $meta['_version']);
+            if($proc->isSuccessful()){
                 $this->output->writeInfo("Successfully removed php");
             }
             else {
@@ -76,7 +75,8 @@ class PhpTask extends Task {
         }
 
         $this->output->writeInfo("Building php");
-        if($this->runScript('phpbrew.php.install.sh', true, $meta['_version'], $meta['variants'])){
+        $proc = $this->runScript('phpbrew.php.install.sh', true, $meta['_version'], $meta['variants']);
+        if($proc->isSuccessful()){
             $this->output->writeInfo("Successfully built php");
         }
         else {
@@ -106,7 +106,8 @@ class PhpTask extends Task {
             $ext_installed = file_exists($ini) || file_exists($ini_disabled);
             if(!$ext_installed || (isset($meta['_old']['extensions'][$extname]['version']) && $meta['_old']['extensions'][$extname]['version'] !== $extmeta['version'])){
                 $this->output->writeInfo("Installing $extname extension");
-                if($this->runScript('phpbrew.ext.install.sh', true, $meta['_version'], $extname)){
+                $proc = $this->runScript('phpbrew.ext.install.sh', true, $meta['_version'], $extname);
+                if($proc->isSuccessful()){
                     $this->output->writeInfo("Successfully installed $extname extension");
                 }
                 else {
@@ -117,7 +118,8 @@ class PhpTask extends Task {
             $ext_enabled = file_exists($ini);
             if($extmeta['enabled'] && !$ext_enabled){
                 $this->output->writeInfo("Enabling $extname extension");
-                if($this->runScript('phpbrew.ext.enable.sh', false, $meta['_version'], $extname)){
+                $proc = $this->runScript('phpbrew.ext.enable.sh', null, $meta['_version'], $extname);
+                if($proc->isSuccessful()){
                     $this->output->writeInfo("Successfully enabled $extname extension");
                 }
                 else {
@@ -127,7 +129,8 @@ class PhpTask extends Task {
 
             if (!$extmeta['enabled'] && $ext_enabled){
                 $this->output->writeInfo("Disabling $extname extension");
-                if($this->runScript('phpbrew.ext.disable.sh', false, $meta['_version'], $extname)){
+                $proc = $this->runScript('phpbrew.ext.disable.sh', null, $meta['_version'], $extname);
+                if($proc->isSuccessful()){
                     $this->output->writeInfo("Successfully disabled $extname extension");
                 }
                 else {
@@ -159,7 +162,10 @@ class PhpTask extends Task {
         $fpm_config_updated_1 = Util::augeas('PHP', $fpm_config_file, 'www/listen', '127.0.0.1:' . $meta['fpm']['port']);
         $fpm_config_updated_2 = Util::augeas('PHP', $fpm_config_file, 'www/user', 'www-data');
         $fpm_config_updated_3 = Util::augeas('PHP', $fpm_config_file, 'www/group', 'www-data');
-        if($fpm_config_updated_1 || $fpm_config_updated_2 || $fpm_config_updated_3){
+        if(0 === $fpm_config_updated_1 || 0 === $fpm_config_updated_2 || 0 === $fpm_config_updated_3){
+            $this->output->writeError("Failed to configure fpm config file '$fpm_config_file'");
+        }
+        else if(2 === $fpm_config_updated_1 || 2 === $fpm_config_updated_2 || 2 === $fpm_config_updated_3){
             $this->output->writeInfo("Configured fpm");
         }
 
@@ -196,38 +202,62 @@ class PhpTask extends Task {
 
     protected function setDefaultPhp($version) {
 
+        $proc = $this->runScript('phpbrew.php.current.sh');
+        if(!$proc->isSuccessful()){
+            $this->output->writeError("Failed to get current php version");
+            return;
+        }
+
+        $current = null;
+        $output = $proc->getOutput();
+        if(preg_match('/php\-([0-9\.]*)/', $output, $matches)){
+            $current = $matches[1];
+        }
+
+        if($current === $version){
+            return;
+        }
+
         // Use system php
         if(null === $version){
-            if(!$this->runScript('phpbrew.php.switch_sys.sh', false)){
+            $proc = $this->runScript('phpbrew.php.switch_sys.sh');
+            if(!$proc->isSuccessful()){
                 throw new \Exception("Unable to switch to system php");
             }
             return;
         }
 
-        if(!$this->runScript('phpbrew.php.switch.sh', false, $version)){
+        $proc = $this->runScript('phpbrew.php.switch.sh', null, $version);
+        if(!$proc->isSuccessful()){
             throw new \Exception("Unable to switch to php $version");
         }
     }
 
+    /**
+     * @return \Symfony\Component\Process\Process
+     * @throws \Exception
+     */
     protected function runScript() {
 
         $args = func_get_args();
         $args_size = func_num_args();
-        if($args_size < 2){
-            throw new \Exception("runScript() function requires at lease two arguments, $args_size was given");
+        if($args_size == 0){
+            throw new \Exception("runScript() function requires at lease one argument, $args_size was given");
         }
 
         $script = array_shift($args);
-        $send_output = array_shift($args);
-
-        $script_path = "/vagrant/provision/main/scripts/$script";
-        $script_args = implode(" ", $args);
-
-        $success = Util::Process("sudo -u vagrant bash $script_path $script_args", $this->output, $send_output, null);
-        if ($success) {
-            return true;
+        $force_stdout = null;
+        if($args_size > 1){
+            $force_stdout = array_shift($args);
         }
 
-        return false;
+        $cmd = "/vagrant/provision/main/scripts/$script";
+        if(count($args) > 0){
+            $cmd .= " " . implode(" ", $args);
+        }
+
+        $proc = Util::Process("sudo -u vagrant bash $cmd", $this->output, false, $force_stdout, null);
+
+        return $proc;
     }
 }

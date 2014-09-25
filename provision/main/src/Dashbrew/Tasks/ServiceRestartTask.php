@@ -24,12 +24,12 @@ class ServiceRestartTask extends Task {
 
         $this->output->writeInfo("Restarting services");
 
-        Util::exec("monit quit");
+        Util::process("monit quit", $this->output);
 
         // wait until monit quits
         while(file_exists('/var/run/monit.pid')) usleep(500000);
 
-        Util::exec("monit restart all");
-        Util::exec("monit");
+        Util::process("monit restart all", $this->output);
+        Util::process("monit", $this->output);
     }
 }
