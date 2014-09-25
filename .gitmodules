@@ -1,18 +1,36 @@
-[submodule "provision/main/src/Symfony/Component/Finder"]
-	path = provision/main/src/Symfony/Component/Finder
+[submodule "src/Symfony/Component/Finder"]
+	path = src/Symfony/Component/Finder
 	url = https://github.com/symfony/Finder.git
-[submodule "provision/main/src/Symfony/Component/Yaml"]
-	path = provision/main/src/Symfony/Component/Yaml
+[submodule "src/Symfony/Component/Yaml"]
+	path = src/Symfony/Component/Yaml
 	url = https://github.com/symfony/Yaml.git
-[submodule "provision/main/src/Symfony/Component/Filesystem"]
-	path = provision/main/src/Symfony/Component/Filesystem
+[submodule "src/Symfony/Component/Filesystem"]
+	path = src/Symfony/Component/Filesystem
 	url = https://github.com/symfony/Filesystem.git
-[submodule "provision/main/src/Symfony/Component/Process"]
-	path = provision/main/src/Symfony/Component/Process
+[submodule "src/Symfony/Component/Process"]
+	path = src/Symfony/Component/Process
 	url = https://github.com/symfony/Process.git
-[submodule "provision/main/src/Symfony/Component/Console"]
-	path = provision/main/src/Symfony/Component/Console
+[submodule "src/Symfony/Component/Console"]
+	path = src/Symfony/Component/Console
 	url = https://github.com/symfony/Console.git
-[submodule "provision/main/src/Symfony/Component/Stopwatch"]
-	path = provision/main/src/Symfony/Component/Stopwatch
+[submodule "src/Symfony/Component/Stopwatch"]
+	path = src/Symfony/Component/Stopwatch
 	url = https://github.com/symfony/Stopwatch.git
+[submodule "src/Silex"]
+	path = src/Silex
+	url = https://github.com/silexphp/Silex.git
+[submodule "src/Pimple"]
+	path = src/Pimple
+	url = https://github.com/fabpot/Pimple.git
+[submodule "src/Symfony/Component/EventDispatcher"]
+	path = src/Symfony/Component/EventDispatcher
+	url = https://github.com/symfony/EventDispatcher
+[submodule "src/Symfony/Component/HttpFoundation"]
+	path = src/Symfony/Component/HttpFoundation
+	url = https://github.com/symfony/HttpFoundation
+[submodule "src/Symfony/Component/HttpKernel"]
+	path = src/Symfony/Component/HttpKernel
+	url = https://github.com/symfony/HttpKernel
+[submodule "src/Symfony/Component/Routing"]
+	path = src/Symfony/Component/Routing
+	url = https://github.com/symfony/Routing

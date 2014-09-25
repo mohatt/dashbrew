@@ -2,7 +2,7 @@
 <?php
 
 // Initialize the autoloader
-require __DIR__ . '/src/autoload.php';
+require __DIR__ . '/../../src/autoload.php';
 
 $application = new Dashbrew\Application();
 $application->run();
