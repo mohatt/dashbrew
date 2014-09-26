@@ -3,9 +3,7 @@
 class Autoload {
 
     static protected $namespaces = [
-        'Pimple' => 'Pimple/lib',
-        'Silex'  => 'Silex/src',
-        'Twig'   => 'Twig/lib',
+        'Slim' => 'Slim',
     ];
 
     static public function loader($className) {

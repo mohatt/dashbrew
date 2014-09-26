@@ -16,27 +16,6 @@
 [submodule "src/Symfony/Component/Stopwatch"]
 	path = src/Symfony/Component/Stopwatch
 	url = https://github.com/symfony/Stopwatch.git
-[submodule "src/Silex"]
-	path = src/Silex
-	url = https://github.com/silexphp/Silex.git
-[submodule "src/Pimple"]
-	path = src/Pimple
-	url = https://github.com/fabpot/Pimple.git
-[submodule "src/Symfony/Component/EventDispatcher"]
-	path = src/Symfony/Component/EventDispatcher
-	url = https://github.com/symfony/EventDispatcher
-[submodule "src/Symfony/Component/HttpFoundation"]
-	path = src/Symfony/Component/HttpFoundation
-	url = https://github.com/symfony/HttpFoundation
-[submodule "src/Symfony/Component/HttpKernel"]
-	path = src/Symfony/Component/HttpKernel
-	url = https://github.com/symfony/HttpKernel
-[submodule "src/Symfony/Component/Routing"]
-	path = src/Symfony/Component/Routing
-	url = https://github.com/symfony/Routing
-[submodule "src/Twig"]
-	path = src/Twig
-	url = https://github.com/fabpot/Twig.git
-[submodule "src/Symfony/Component/Debug"]
-	path = src/Symfony/Component/Debug
-	url = https://github.com/symfony/Debug.git
+[submodule "src/Slim"]
+	path = src/Slim
+	url = https://github.com/codeguy/Slim.git
