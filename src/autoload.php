@@ -4,30 +4,30 @@ class Autoload {
 
     static protected $namespaces = [
         'Pimple' => 'Pimple/lib',
-        'Silex' => 'Silex/src',
+        'Silex'  => 'Silex/src',
     ];
 
     static public function loader($className) {
 
-        $path = str_replace('\\', '/', $className);
+        $className = ltrim($className, '\\');
+        $fileName  = '';
+        $namespace = '';
+        if ($lastNsPos = strrpos($className, '\\')) {
+            $namespace = substr($className, 0, $lastNsPos);
+            $className = substr($className, $lastNsPos + 1);
+            $fileName  = str_replace('\\', DIRECTORY_SEPARATOR, $namespace) . DIRECTORY_SEPARATOR;
+        }
+
+        $fileName .= str_replace('_', DIRECTORY_SEPARATOR, $className) . '.php';
+
         foreach(self::$namespaces as $ns => $nsDir){
-            if($path == $ns || 0 === strpos($path, $ns . '/')){
-                $path = $nsDir . '/' . $path;
+            if(0 === strpos($fileName, $ns . DIRECTORY_SEPARATOR)){
+                $fileName = $nsDir . DIRECTORY_SEPARATOR . $fileName;
                 break;
             }
         }
 
-        $filename = __DIR__ . DIRECTORY_SEPARATOR . $path . ".php";
-
-        if (file_exists($filename)) {
-            require $filename;
-
-            if (class_exists($className)) {
-                return true;
-            }
-        }
-
-        return false;
+        require __DIR__ . DIRECTORY_SEPARATOR . $fileName;
     }
 }
 
