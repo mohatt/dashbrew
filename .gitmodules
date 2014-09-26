@@ -34,3 +34,6 @@
 [submodule "src/Symfony/Component/Routing"]
 	path = src/Symfony/Component/Routing
 	url = https://github.com/symfony/Routing
+[submodule "src/Twig"]
+	path = src/Twig
+	url = https://github.com/fabpot/Twig.git
