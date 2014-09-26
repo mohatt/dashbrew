@@ -24,6 +24,8 @@ class PackagesTask extends Task {
             throw new \Exception("The Config task can only be run by the Provision command.");
         }
 
+        $this->output->writeInfo("Checking packages");
+
         $this->manageOsPackages();
         $this->manageApacheModules();
         $this->manageNpmPackages();
@@ -155,7 +157,7 @@ class PackagesTask extends Task {
         $packages_config = Config::get('npm::packages');
         foreach($packages_config as $package => $installed) {
             $is_installed = false;
-            $proc = Util::process("npm -j ls $package", $this->output, true);
+            $proc = Util::process("npm -j ls -g $package", $this->output, true);
             if($proc->isSuccessful()){
                 $is_installed = (false !== stripos($proc->getOutput(), '"' . $package . '": {'));
             }
@@ -175,7 +177,7 @@ class PackagesTask extends Task {
         foreach($packages['remove'] as $package){
             $this->output->writeInfo("Uninstalling npm package '$package'");
 
-            $proc = Util::process("npm uninstall $package", $this->output);
+            $proc = Util::process("npm uninstall -g $package", $this->output);
             if(!$proc->isSuccessful()){
                 $this->output->writeError("Error occured uninstalling npm package '$package'");
                 continue;
@@ -187,7 +189,7 @@ class PackagesTask extends Task {
         foreach($packages['install'] as $package){
             $this->output->writeInfo("Installing npm package '$package'");
 
-            $proc = Util::process("npm install $package", $this->output, false, null, null);
+            $proc = Util::process("npm install -g $package", $this->output, false, null, null);
             if(!$proc->isSuccessful()){
                 $this->output->writeError("Error occured while installing npm package '$package'");
                 continue;
