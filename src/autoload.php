@@ -19,16 +19,16 @@ class Autoload {
             $fileName  = str_replace('\\', DIRECTORY_SEPARATOR, $namespace) . DIRECTORY_SEPARATOR;
         }
 
-        $fileName .= str_replace('_', DIRECTORY_SEPARATOR, $className) . '.php';
+        $fileName .= str_replace('_', DIRECTORY_SEPARATOR, $className);
 
         foreach(self::$namespaces as $ns => $nsDir){
-            if(0 === strpos($fileName, $ns . DIRECTORY_SEPARATOR)){
+            if($ns == $fileName || 0 === strpos($fileName, $ns . DIRECTORY_SEPARATOR)){
                 $fileName = $nsDir . DIRECTORY_SEPARATOR . $fileName;
                 break;
             }
         }
 
-        require __DIR__ . DIRECTORY_SEPARATOR . $fileName;
+        require __DIR__ . DIRECTORY_SEPARATOR . $fileName . '.php';
     }
 }
 
