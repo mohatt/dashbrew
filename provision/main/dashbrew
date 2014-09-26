@@ -4,5 +4,5 @@
 // Initialize the autoloader
 require __DIR__ . '/../../src/autoload.php';
 
-$application = new Dashbrew\Application();
+$application = new Dashbrew\Cli\Application();
 $application->run();
