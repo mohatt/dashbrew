@@ -37,3 +37,6 @@
 [submodule "src/Twig"]
 	path = src/Twig
 	url = https://github.com/fabpot/Twig.git
+[submodule "src/Symfony/Component/Debug"]
+	path = src/Symfony/Component/Debug
+	url = https://github.com/symfony/Debug.git
