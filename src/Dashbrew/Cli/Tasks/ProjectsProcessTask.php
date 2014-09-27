@@ -62,7 +62,7 @@ class ProjectsProcessTask extends Task {
         $vhost = array_merge([
             'docroot'         => '${dir}',
             'servername'      => $id,
-            'options'         => ['Indexes','FollowSymLinks','MultiViews'],
+            'options'         => ['Indexes','FollowSymLinks'],
             'override'        => ['All'],
             'directoryindex'  => '',
             'ssl'             => false,
