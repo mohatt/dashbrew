@@ -25,8 +25,6 @@ class PackagesTask extends Task {
             throw new \Exception("The Config task can only be run by the Provision command.");
         }
 
-        $this->output->writeInfo("Checking packages");
-
         $this->manageOsPackages();
         $this->manageApacheModules();
         $this->manageNpmPackages();
@@ -36,6 +34,8 @@ class PackagesTask extends Task {
      * Manages os system packages via apt-get
      */
     protected function manageOsPackages(){
+
+        $this->output->writeInfo("Checking system packages");
 
         $packages = [
             'install' => [],
@@ -98,6 +98,8 @@ class PackagesTask extends Task {
      */
     protected function manageApacheModules(){
 
+        $this->output->writeInfo("Checking apache modules");
+
         $modules = [
             'enable'   => [],
             'disable'  => []
@@ -158,6 +160,8 @@ class PackagesTask extends Task {
      * Manages nodjs modules via npm
      */
     protected function manageNpmPackages(){
+
+        $this->output->writeInfo("Checking nodejs modules");
 
         $packages = [
             'install' => [],
