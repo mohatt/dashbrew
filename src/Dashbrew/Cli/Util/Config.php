@@ -7,9 +7,21 @@ namespace Dashbrew\Cli\Util;
  *
  * @package Dashbrew\Util
  */
+/**
+ * Class Config
+ * @package Dashbrew\Cli\Util
+ */
 class Config {
 
+    /**
+     * The path to the main config file
+     */
     const CONFIG_FILE       = '/vagrant/config/config.yaml';
+
+    /**
+     * The path to the previous version of the config file, it is being used to
+     *  detect deleted config enteries
+     */
     const CONFIG_FILE_TEMP  = '/vagrant/provision/main/etc/config.yaml.old';
 
     /**
@@ -22,15 +34,17 @@ class Config {
      */
     protected static $configOld;
 
-    public function init() {
+    /**
+     * @param bool $mergeOld
+     */
+    public static function init($mergeOld = true) {
 
         $yaml = Util::getYamlParser();
-        $fs   = Util::getFilesystem();
 
         self::$config    = $yaml->parse(file_get_contents(self::CONFIG_FILE));
         self::$configOld = [];
 
-        if($fs->exists(self::CONFIG_FILE_TEMP)){
+        if($mergeOld && file_exists(self::CONFIG_FILE_TEMP)){
             self::$configOld = $yaml->parse(file_get_contents(self::CONFIG_FILE_TEMP));
             self::$config    = self::mergeOldConfig();
         }
@@ -75,7 +89,7 @@ class Config {
     }
 
     /**
-     * @param null $key
+     * @param string $key
      * @return bool
      */
     public static function hasChanges($key = null) {
@@ -95,11 +109,17 @@ class Config {
         return self::$config !== self::$configOld;
     }
 
+    /**
+     *
+     */
     public static function writeTemp() {
 
         return Util::getFilesystem()->copy(self::CONFIG_FILE, self::CONFIG_FILE_TEMP, true, 'vagrant');
     }
 
+    /**
+     * @return array
+     */
     protected static function mergeOldConfig() {
 
         $config = self::$config;
