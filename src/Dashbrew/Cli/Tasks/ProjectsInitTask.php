@@ -7,6 +7,7 @@ use Dashbrew\Cli\Task\Task;
 use Dashbrew\Cli\Util\Util;
 use Dashbrew\Cli\Util\Config;
 use Dashbrew\Cli\Util\Registry;
+use Dashbrew\Cli\Util\Projects;
 use Dashbrew\Cli\Util\Finder;
 
 /**
@@ -19,16 +20,6 @@ use Dashbrew\Cli\Util\Finder;
 class ProjectsInitTask extends Task {
 
     /**
-     * The path to the file that contains the hosts that needs to be imported into /etc/hosts
-     */
-    const PROJECTS_HOSTS_FILE    = '/vagrant/provision/main/etc/hosts.json';
-
-    /**
-     * The path to the file that holds informations about installed projects
-     */
-    const PROJECTS_CATALOG_FILE  = '/vagrant/provision/main/etc/projects.json';
-
-    /**
      * @throws \Exception
      */
     public function run() {
@@ -39,12 +30,10 @@ class ProjectsInitTask extends Task {
 
         $this->output->writeInfo("Finding projects");
 
-        $projects_catalog = [];
-        if(file_exists(self::PROJECTS_CATALOG_FILE)){
-            $projects_catalog = json_decode(file_get_contents(self::PROJECTS_CATALOG_FILE), true);
-        }
+        $projects_catalog = Projects::get();
 
         $hosts = [];
+        $shortcuts = [];
         $projects = [
             'skip'    => [],
             'check'   => [],
@@ -54,7 +43,6 @@ class ProjectsInitTask extends Task {
         ];
 
         $yaml = Util::getYamlParser();
-        $fs   = Util::getFilesystem();
 
         $finder = new Finder;
         $finder->files()
@@ -77,10 +65,11 @@ class ProjectsInitTask extends Task {
             }
 
             foreach($file_projects as $id => $project) {
-                # Add project file path
                 $project['_path'] = $file_path;
 
                 if(isset($projects_catalog[$id])){
+                    $project['_created'] = $projects_catalog[$id]['_created'];
+                    $project['_modified'] = $projects_catalog[$id]['_modified'];
                     if($project == $projects_catalog[$id]){
                         if($this->__projectNeedsCheck($id, $project)){
                             $projects['check'][$id] = $project;
@@ -90,6 +79,7 @@ class ProjectsInitTask extends Task {
                         }
                     }
                     else {
+                        $project['_modified'] = time();
                         $projects['modify'][$id] = $project;
                     }
                 }
@@ -104,6 +94,8 @@ class ProjectsInitTask extends Task {
                         continue;
                     }
 
+                    $project['_created'] = time();
+                    $project['_modified'] = time();
                     $projects['create'][$id] = $project;
                 }
 
@@ -121,6 +113,14 @@ class ProjectsInitTask extends Task {
                 if(isset($project['vhost']['serveraliases'])){
                     foreach($project['vhost']['serveraliases'] as $serveralias){
                         $hosts[] = $serveralias;
+                    }
+                }
+
+                if(!empty($project['shortcuts'])){
+                    foreach($project['shortcuts'] as $shortcut){
+                        if(!empty($shortcut['title']) && !empty($shortcut['url'])){
+                            $shortcuts[] = $shortcut;
+                        }
                     }
                 }
             }
@@ -165,21 +165,24 @@ class ProjectsInitTask extends Task {
                 (count($projects['delete']) > 0 ? "\n       |--> " . (count($projects['delete'])) . " will be deleted" : "")
             );
         }
-
-        # Write hosts file so that it can be accessed later by the Hostmanager plugin
-        $hosts_file = self::PROJECTS_HOSTS_FILE;
-        $hosts_file_content = json_encode($hosts);
-        if(!file_exists($hosts_file) || md5($hosts_file_content) !== md5_file($hosts_file)){
-            $this->output->writeInfo("Writing hosts file");
-            $fs->write($hosts_file, $hosts_file_content, 'vagrant');
+        else {
+            $this->output->writeDebug("Found " . $projects_total . " project(s)");
         }
 
         # Write projects catalog file
-        $projects_file = self::PROJECTS_CATALOG_FILE;
-        $projects_file_content = json_encode(array_merge($projects['skip'], $projects['check'], $projects['modify'], $projects['create']));
-        if(!file_exists($projects_file) || md5($projects_file_content) !== md5_file($projects_file)){
-            $this->output->writeInfo("Writing projects catalog file");
-            $fs->write($projects_file, $projects_file_content, 'vagrant');
+        $projects_catalog = array_merge($projects['skip'], $projects['check'], $projects['modify'], $projects['create']);
+        if(Projects::writeCatalog($projects_catalog)){
+            $this->output->writeInfo("Updated projects catalog file");
+        }
+
+        # Write hosts file so that it can be accessed later by the Hostmanager plugin
+        if(Projects::writeHosts($hosts)){
+            $this->output->writeInfo("Updated projects hosts file");
+        }
+
+        # Write shortcuts file so that it can be accessed later by dashbrew web dashboard
+        if(Projects::writeShortcuts($shortcuts)){
+            $this->output->writeInfo("Updated projects shortcuts file");
         }
     }
 
