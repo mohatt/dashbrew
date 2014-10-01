@@ -1,0 +1,9 @@
+---
+dashbrew.dev:
+  title: Dashbrew
+  php: system
+  vhost:
+    servername: dashbrew.dev
+    serveraliases:
+      - www.dashbrew.dev
+    ssl: true

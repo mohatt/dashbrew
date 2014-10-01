@@ -1,8 +1,3 @@
-# Ignore stuff that pops up locally
-*.sublime*
-.DS_Store
-.idea
-
 # Ignore vagrant's files
 /.vagrant
 
@@ -11,3 +6,24 @@
 
 # Ignore public directory
 /public/*
+!/public/dashbrew
+
+# ignore any log files
+*.log
+
+# IDE stuff
+*.sublime*
+.idea
+
+# generic files to ignore
+*~
+*.lock
+*.DS_Store
+*.swp
+*.out
+
+# Windows stuff
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/

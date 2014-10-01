@@ -1,0 +1,13 @@
+{
+  "name": "dashbrew-dashboard",
+  "homepage": "https://github.com/mdkholy/dashbrew",
+  "authors": [
+    "Mohamed Elkholy <mmdkholy@gmail.com>"
+  ],
+  "dependencies": {
+    "bootstrap": "~3.2.0",
+    "font-awesome": "~4.2.0",
+    "list.js": "~1.1.1",
+    "list.pagination.js": "~0.1.1"
+  }
+}
