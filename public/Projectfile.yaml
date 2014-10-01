@@ -1,0 +1,53 @@
+---
+local.dev:
+  php: system
+  title: Server Root
+  shortcuts:
+    - title: Server Root
+      url: http://local.dev/
+  vhost:
+    servername: local.dev
+    serveraliases:
+      - www.local.dev
+      - localh1.dev
+    setenv:
+      - APP_ENV dev
+    override:
+      - All
+    options:
+      - Indexes
+      - FollowSymLinks
+      - MultiViews
+    ssl: true
+
+monit.dev:
+  title: Monit
+  shortcuts:
+    - title: Monit
+      url: http://monit.dev/
+  vhost:
+    servername: monit.dev
+    reverseproxy:
+      path: /
+      url: http://127.0.0.1:2812/
+
+phpmyadmin.dev:
+  php: system
+  title: phpMyAdmin
+  shortcuts:
+    - title: phpMyAdmin
+      url: http://phpmyadmin.dev/
+  vhost:
+    servername: phpmyadmin.dev
+    docroot: /opt/pma
+
+mailcatcher.dev:
+  title: Mailcatcher
+  shortcuts:
+    - title: Mailcatcher
+      url: http://mailcatcher.dev/
+  vhost:
+    servername: mailcatcher.dev
+    reverseproxy:
+      path: /
+      url: http://127.0.0.1:1080/
