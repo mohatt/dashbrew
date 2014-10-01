@@ -202,6 +202,14 @@ class ProjectsProcessTask extends Task {
 
         static $default_php_version;
 
+        if($project['php'] == 'system'){
+            $vhost['includes'] = [
+              '/etc/apache2/php/php-system-fpm.conf'
+            ];
+
+            return $vhost;
+        }
+
         $phps_config = Config::get('php::builds');
         // set default php version if not set
         if(null === $default_php_version){

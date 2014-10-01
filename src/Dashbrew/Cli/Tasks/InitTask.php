@@ -55,6 +55,20 @@ class InitTask extends Task {
                 'group'   => 'root',
             ],
             [
+                'path'    => '/etc/php5/fpm/php-fpm.conf',
+                'source'  => '/vagrant/config/php/fpm/php-fpm.conf',
+                'default' => '/etc/php5/fpm/php-fpm.conf',
+                'owner'   => 'root',
+                'group'   => 'root',
+            ],
+            [
+                'path'    => '/etc/php5/fpm/php.ini',
+                'source'  => '/vagrant/config/php/fpm/php.ini',
+                'default' => '/etc/php5/fpm/php.ini',
+                'owner'   => 'root',
+                'group'   => 'root',
+            ],
+            [
                 'path'    => '/etc/mysql/my.cnf',
                 'source'  => '/vagrant/config/mysql/my.cnf',
                 'default' => '/etc/mysql/my.cnf',
@@ -103,6 +117,20 @@ class InitTask extends Task {
                 'path'    => '/etc/php5/cli/conf.d',
                 'source'  => '/vagrant/config/php/cli/conf.d',
                 'default' => '/etc/php5/cli/conf.d',
+                'owner'   => 'root',
+                'group'   => 'root',
+            ],
+            [
+                'path'    => '/etc/php5/fpm/conf.d',
+                'source'  => '/vagrant/config/php/fpm/conf.d',
+                'default' => '/etc/php5/fpm/conf.d',
+                'owner'   => 'root',
+                'group'   => 'root',
+            ],
+            [
+                'path'    => '/etc/php5/fpm/pool.d',
+                'source'  => '/vagrant/config/php/fpm/pool.d',
+                'default' => '/etc/php5/fpm/pool.d',
                 'owner'   => 'root',
                 'group'   => 'root',
             ]
