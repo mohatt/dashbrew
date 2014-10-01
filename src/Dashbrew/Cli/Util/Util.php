@@ -59,11 +59,30 @@ class Util {
             $finder = new Finder;
             $finder->directories()->in('/opt/phpbrew/php')->depth('== 0');
             foreach ($finder as $file) {
+                $phpbin = $file->getPathname() . '/bin/php';
+                if(!file_exists($phpbin)){
+                    continue;
+                }
+
                 $phps[] = $file->getFilename();
             }
         }
 
         return $phps;
+    }
+
+    /**
+     * @return string
+     */
+    public static function getSystemPhp() {
+
+        $command = '/usr/bin/php -v | grep "PHP 5" | sed "s/.*PHP \([^-]*\).*/\1/" | cut -c 1-6';
+
+        if(!self::exec($command, false, $output)){
+            return 0;
+        }
+
+        return $output[0];
     }
 
     /**
