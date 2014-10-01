@@ -17,7 +17,7 @@
 ## Start Monit in the background (run as a daemon):
 #
   set daemon 120            # check services at 2-minute intervals
-#   with start delay 240    # optional: delay the first check by 4-minutes (by
+    with start delay 5      # optional: delay the first check by 4-minutes (by
 #                           # default Monit check immediately after Monit start)
 #
 #
