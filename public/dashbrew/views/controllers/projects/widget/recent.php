@@ -1,9 +1,10 @@
 <ul class="projects-list list-group">
 <?php foreach($projects as $id => $project): ?>
 <li class="list-group-item" onclick="$.switchListItemExtra(this)">
-    <div class="project-info">
-        <h4 class="list-group-item-heading"><?= $project['title'] ?></h4>
-        <a href="<?= $project['http'] ?>" target="_blank" class="list-group-item-text"><?=  $project['host'] ?></a>
+    <i class="list-group-item-icon fa fa-file-code-o pull-left"></i>
+    <h4 class="list-group-item-heading"><?= $project['title'] ?></h4>
+    <div class="list-group-item-subheading">
+        <a href="<?= $project['http'] ?>" target="_blank"><?=  $project['host'] ?></a>
     </div>
     <div class="list-group-item-extra">
         <dl>

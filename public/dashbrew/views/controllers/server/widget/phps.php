@@ -1,9 +1,10 @@
 <ul class="projects-list list-group">
     <li class="list-group-item" onclick="$.switchListItemExtra(this)">
-        <div class="project-info">
-            <h4>System (<?= $systemPhp ?>)</h4>
-            <span class="label label-info">System</span>
-            <span class="label label-success">Running</span>
+        <i class="list-group-item-icon fa fa-cogs pull-left"></i>
+        <h4 class="list-group-item-heading"><?= $systemPhp ?></h4>
+        <div class="list-group-item-subheading">
+            <span class="label label-info">system</span>
+            <span class="label label-success">running</span>
         </div>
         <div class="list-group-item-extra">
             <dl>
@@ -14,12 +15,18 @@
     </li>
     <?php foreach($phps as $version => $meta): ?>
     <li class="list-group-item" onclick="$.switchListItemExtra(this)">
-        <div class="project-info">
-            <h4><?= $version ?></h4>
+        <i class="list-group-item-icon fa fa-cogs pull-left"></i>
+        <h4 class="list-group-item-heading"><?= $version ?></h4>
+        <div class="list-group-item-subheading">
+            <span class="label label-info">phpbrew</span>
             <?php if(!empty($meta['default'])): ?>
-                <span class="label label-info">Default</span>
+                <span class="label label-warning">default</span>
             <?php endif; ?>
-            <span class="label label-success"><?= $meta['running'] ? 'Running' : 'Not Running' ?></span>
+            <?php if(!empty($meta['running'])): ?>
+            <span class="label label-success">running</span>
+            <?php else: ?>
+            <span class="label label-danger">stopped</span>
+            <?php endif; ?>
         </div>
         <div class="list-group-item-extra">
             <dl>

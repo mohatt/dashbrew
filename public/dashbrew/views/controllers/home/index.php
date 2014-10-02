@@ -7,7 +7,7 @@
                 </div>
                 <div class="widget-content pull-left">
                     <div class="title"><?= false !== $stats['projects'] ? $stats['projects'] : 'N/A' ; ?></div>
-                    <div class="comment">active projects</div>
+                    <div class="comment">projects</div>
                 </div>
                 <div class="clearfix"></div>
             </div>
@@ -16,7 +16,7 @@
     <div class="col-lg-3 col-md-6 col-xs-12">
         <div class="widget">
             <div class="widget-body">
-                <div class="widget-icon orange pull-left">
+                <div class="widget-icon green pull-left">
                     <i class="fa fa-database"></i>
                 </div>
                 <div class="widget-content pull-left">
@@ -30,7 +30,7 @@
     <div class="col-lg-3 col-md-6 col-xs-12">
         <div class="widget">
             <div class="widget-body">
-                <div class="widget-icon red pull-left">
+                <div class="widget-icon green pull-left">
                     <i class="fa fa-cogs"></i>
                 </div>
                 <div class="widget-content pull-left">
@@ -45,7 +45,7 @@
     <div class="col-lg-3 col-md-6 col-xs-12">
         <div class="widget">
             <div class="widget-body">
-                <div class="widget-icon blue pull-left">
+                <div class="widget-icon green pull-left">
                     <i class="fa fa-clock-o"></i>
                 </div>
                 <div class="widget-content pull-left">
@@ -74,7 +74,7 @@ $(document).ready(function(){
     });
     $('#installed-phps').widget({
         url: '<?= $_url('/server/widget/phps') ?>',
-        title: '<i class="fa fa-cogs"></i> Installed PHPs',
+        title: '<i class="fa fa-file-code-o"></i> Installed PHPs',
         class: 'no-padding'
     });
 });
