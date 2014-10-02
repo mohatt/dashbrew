@@ -9,7 +9,7 @@ Vagrant.configure(2) do |config|
   config.vm.box = "ubuntu-14.04-dashbrew"
 
   # The hostname the machine should have.
-  config.vm.hostname = "dashbrew.dev"
+  config.vm.hostname = "dashbrew.vm"
 
   # Default Box IP Address
   #
