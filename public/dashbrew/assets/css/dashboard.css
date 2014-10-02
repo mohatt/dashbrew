@@ -30,7 +30,7 @@ html {
 body {
   background: #f3f3f3;
   font-family: "Montserrat", Trebuchet, Arial;
-  color: #333333 !important;
+  color: #555 !important;
 }
 .row {
   margin-left: 0 !important;
@@ -61,7 +61,7 @@ body {
           transition: all .4s ease 0s;
 }
 .green {
-  background: #23ae89 !important;
+  background: #90B64A !important;
 }
 .blue {
   background: #2361ae !important;
@@ -77,6 +77,9 @@ body {
 }
 div.input-mask {
   padding-top: 7px;
+}
+.label {
+  font-weight: normal;
 }
 .loading {
   width: 40px;
@@ -294,6 +297,9 @@ ul.sidebar .sidebar-title {
   height: 35px;
   line-height: 40px;
   text-transform: uppercase;
+  -webkit-transition: all .6s ease 0s;
+       -o-transition: all .6s ease 0s;
+          transition: all .6s ease 0s;
 }
 ul.sidebar .sidebar-list {
   height: 40px;
@@ -322,7 +328,8 @@ ul.sidebar .sidebar-list .menu-icon {
   bottom: 0;
 }
 #page-wrapper:not(.active) ul.sidebar .sidebar-title {
-  display: none;
+  height: 0px;
+  text-indent: -100px;
 }
 #page-wrapper:not(.active) ul.sidebar .sidebar-title.separator {
   display: block;
@@ -446,57 +453,62 @@ ul.sidebar .sidebar-list .menu-icon {
   font-size: 28px;
   display: block;
 }
-/**
- * Widgets
- */
-.widget-body.no-padding .list-group {
+.widget .widget-body.no-padding .list-group {
   margin-bottom: 0;
 }
-.widget-body.no-padding .list-group .list-group-item {
+.widget .widget-body.no-padding .list-group .list-group-item {
   cursor: pointer;
   border-radius: 0;
   border-right: 0;
   border-left: 0;
 }
-.widget-body.no-padding .list-group .list-group-item:first-child {
+.widget .widget-body.no-padding .list-group .list-group-item:first-child {
   border-top: 0;
 }
-.widget-body.no-padding .list-group .list-group-item:last-child {
+.widget .widget-body.no-padding .list-group .list-group-item:last-child {
   border-bottom: 0;
 }
-.widget-body.no-padding .list-group .list-group-item .list-group-item-heading {
-  font-size: 15px;
+.widget .widget-body.no-padding .list-group .list-group-item .list-group-item-heading {
+  font-size: 16px;
 }
-.widget-body.no-padding .list-group .list-group-item .list-group-item-text,
-.widget-body.no-padding .list-group .list-group-item dd,
-.widget-body.no-padding .list-group .list-group-item dd a {
+.widget .widget-body.no-padding .list-group .list-group-item .list-group-item-icon {
+  font-size: 30px;
+}
+.widget .widget-body.no-padding .list-group .list-group-item .list-group-item-heading,
+.widget .widget-body.no-padding .list-group .list-group-item .list-group-item-subheading {
+  margin-left: 30px;
+}
+.widget .widget-body.no-padding .list-group .list-group-item .list-group-item-subheading a,
+.widget .widget-body.no-padding .list-group .list-group-item dd,
+.widget .widget-body.no-padding .list-group .list-group-item dd a {
   font-size: 13px;
   color: #999;
+  text-shadow: 1px 1px #fff;
 }
-.widget-body.no-padding .list-group .list-group-item .list-group-item-extra {
+.widget .widget-body.no-padding .list-group .list-group-item .list-group-item-extra {
   display: none;
-  border-top: 1px solid #b2caFF;
   margin-top: 10px;
+  margin-left: 30px;
+  border-top: 1px solid #ddd;
+  box-shadow: inset 0px 1px 0px #fff;
 }
-.widget-body.no-padding .list-group .list-group-item .list-group-item-extra dl {
+.widget .widget-body.no-padding .list-group .list-group-item .list-group-item-extra dl {
   margin: 0;
 }
-.widget-body.no-padding .list-group .list-group-item .list-group-item-extra dt {
+.widget .widget-body.no-padding .list-group .list-group-item .list-group-item-extra dt {
+  font-weight: normal;
   margin-top: 10px;
 }
-.widget-body.no-padding .list-group .list-group-item:hover {
+.widget .widget-body.no-padding .list-group .list-group-item:hover {
   background-color: #f8f8f8;
 }
-.widget-body.no-padding .list-group .list-group-item.active {
-  background-color: #428bca;
+.widget .widget-body.no-padding .list-group .list-group-item.active {
+  background-color: #f8f8f8;
+  border-color: #ddd;
+  color: inherit;
 }
-.widget-body.no-padding .list-group .list-group-item.active .list-group-item-extra {
+.widget .widget-body.no-padding .list-group .list-group-item.active .list-group-item-extra {
   display: block;
-}
-.widget-body.no-padding .list-group .list-group-item.active .list-group-item-text,
-.widget-body.no-padding .list-group .list-group-item.active dd,
-.widget-body.no-padding .list-group .list-group-item.active dd a {
-  color: #b2caFF;
 }
 /* Hamburg Menu */
 @media only screen and (max-width: 560px) {
