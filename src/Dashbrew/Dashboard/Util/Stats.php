@@ -2,6 +2,7 @@
 
 namespace Dashbrew\Dashboard\Util;
 
+use Dashbrew\Cli\Util\Util;
 use Dashbrew\Cli\Util\Config;
 use Dashbrew\Cli\Util\Projects;
 
@@ -9,7 +10,7 @@ class Stats {
 
     public static function getPhpCount(){
 
-        return count(Config::get('php::builds'));
+        return count(Util::getInstalledPhps()) + 1;
     }
 
     public static function getDatabaseCount(){
