@@ -22,6 +22,11 @@ var paths = {
       src: 'src/js/dashboard/dashboard.js',
       dest: 'assets/js/dashboard.js',
       minify: false
+    },
+    {
+      src: 'src/bower_components/jquery.cookie/jquery.cookie.js',
+      dest: 'assets/lib/jquery/jquery.cookie.min.js',
+      minify: true
     }
   ],
   less: [

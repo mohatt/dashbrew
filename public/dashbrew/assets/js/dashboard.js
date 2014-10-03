@@ -10,23 +10,20 @@
     $toggler.click(function () {
       $wrapper.toggleClass('active');
       if($wrapper.hasClass('active'))
-        $wrapper.data('sb-active', '1');
+        $.cookie('sb-active', '1');
       else
-        $wrapper.removeData('sb-active');
+        $.cookie('sb-active', '0');
     });
 
-    if($wrapper.hasClass('active'))
-      $wrapper.data('sb-active', '1');
+    if($.cookie('sb-active') == undefined)
+      $.cookie('sb-active', '1');
 
-    var $res = function () {
+    $(window).resize(function () {
       if($(window).width() <= minwidth)
         $wrapper.removeClass('active');
       else
-        $wrapper.data('sb-active') && !$wrapper.hasClass('active') && $wrapper.addClass('active');
-    };
-
-    $res();
-    $(window).resize($res);
+        $.cookie('sb-active') == "1" && $wrapper.addClass('active');
+    });
   });
 
   function Widget(el, options) {

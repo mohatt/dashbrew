@@ -11,13 +11,14 @@
   <link href="<?= $_asset('css/dashboard.css'); ?>" rel="stylesheet" />
 
   <script type="text/javascript" src="<?= $_asset('lib/jquery/jquery.min.js'); ?>"></script>
+  <script type="text/javascript" src="<?= $_asset('lib/jquery/jquery.cookie.min.js'); ?>"></script>
   <script type="text/javascript" src="<?= $_asset('lib/bootstrap/js/bootstrap.min.js'); ?>"></script>
   <script type="text/javascript" src="<?= $_asset('lib/list.js/list.min.js'); ?>"></script>
   <script type="text/javascript" src="<?= $_asset('lib/list.js/list.pagination.min.js'); ?>"></script>
   <script type="text/javascript" src="<?= $_asset('js/dashboard.js'); ?>"></script>
 </head>
 <body>
-  <div id="page-wrapper" class="active">
+  <div id="page-wrapper" class="<?= !isset($_COOKIE['sb-active']) || $_COOKIE['sb-active'] == "1" ? "active" : ""; ?>">
 
     <!-- Sidebar -->
     <div id="sidebar-wrapper">
@@ -31,6 +32,9 @@
         <li class="sidebar-title"><span>NAVIGATION</span></li>
         <li class="sidebar-list">
           <a href="<?= $_url('/'); ?>">Dashboard <span class="menu-icon fa fa-tachometer"></span></a>
+        </li>
+        <li class="sidebar-list">
+          <a href="<?= $_url('projects'); ?>">Projects <span class="menu-icon fa fa-file-code-o"></span></a>
         </li>
         <?php if(!empty($layout_shortcuts)): ?>
         <li class="sidebar-title separator"><span>QUICK LINKS</span></li>
