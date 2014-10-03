@@ -26,7 +26,7 @@ php::builds:
         enabled: true
         version: latest
     fpm:
-      port: 9001
+      port: 9002
 
 #
 # Apache Modules
