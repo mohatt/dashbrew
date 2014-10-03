@@ -351,9 +351,9 @@ ul.sidebar .sidebar-list .menu-icon {
   padding: 0;
   margin: 0;
   text-align: center;
-  -webkit-transition: all .4s ease 0s;
-       -o-transition: all .4s ease 0s;
-          transition: all .4s ease 0s;
+  -webkit-transition: all .6s ease 0s;
+       -o-transition: all .6s ease 0s;
+          transition: all .6s ease 0s;
 }
 .sidebar-footer div a {
   color: #b2bfdc;
