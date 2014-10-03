@@ -1,60 +1,15 @@
 <div class="row">
     <div class="col-lg-3 col-md-6 col-xs-12">
-        <div class="widget">
-            <div class="widget-body">
-                <div class="widget-icon green pull-left">
-                    <i class="fa fa-file-code-o"></i>
-                </div>
-                <div class="widget-content pull-left">
-                    <div class="title"><?= false !== $stats['projects'] ? $stats['projects'] : 'N/A' ; ?></div>
-                    <div class="comment">projects</div>
-                </div>
-                <div class="clearfix"></div>
-            </div>
-        </div>
+        <div id="stats-projects"></div>
     </div>
     <div class="col-lg-3 col-md-6 col-xs-12">
-        <div class="widget">
-            <div class="widget-body">
-                <div class="widget-icon green pull-left">
-                    <i class="fa fa-database"></i>
-                </div>
-                <div class="widget-content pull-left">
-                    <div class="title"><?= false !== $stats['databases'] ? $stats['databases'] : 'N/A' ; ?></div>
-                    <div class="comment">databases</div>
-                </div>
-                <div class="clearfix"></div>
-            </div>
-        </div>
+        <div id="stats-databases"></div>
     </div>
     <div class="col-lg-3 col-md-6 col-xs-12">
-        <div class="widget">
-            <div class="widget-body">
-                <div class="widget-icon green pull-left">
-                    <i class="fa fa-cogs"></i>
-                </div>
-                <div class="widget-content pull-left">
-                    <div class="title"><?= false !== $stats['phps'] ? $stats['phps'] : 'N/A' ; ?></div>
-                    <div class="comment">installed phps</div>
-                </div>
-                <div class="clearfix"></div>
-            </div>
-        </div>
+        <div id="stats-phps"></div>
     </div>
-    <div class="spacer visible-xs"></div>
     <div class="col-lg-3 col-md-6 col-xs-12">
-        <div class="widget">
-            <div class="widget-body">
-                <div class="widget-icon green pull-left">
-                    <i class="fa fa-clock-o"></i>
-                </div>
-                <div class="widget-content pull-left">
-                    <div class="title"><?= false !== $stats['uptime'] ? implode(" ", $stats['uptime']) : 'N/A' ; ?></div>
-                    <div class="comment">uptime</div>
-                </div>
-                <div class="clearfix"></div>
-            </div>
-        </div>
+        <div id="stats-uptime"></div>
     </div>
 </div>
 <div class="row">
@@ -67,14 +22,31 @@
 </div>
 <script>
 $(document).ready(function(){
+    // Stats widgets
+    $('#stats-projects').widget({
+        url: '<?= $_url('/home/widget/stats-projects') ?>',
+    });
+    $('#stats-databases').widget({
+        url: '<?= $_url('/home/widget/stats-databases') ?>',
+    });
+    $('#stats-phps').widget({
+        url: '<?= $_url('/home/widget/stats-phps') ?>',
+    });
+    $('#stats-uptime').widget({
+        url: '<?= $_url('/home/widget/stats-uptime') ?>',
+    });
+
+    // Recent projects widget
     $('#recent-projects').widget({
         url: '<?= $_url('/projects/widget/recent') ?>',
-        title: '<i class="fa fa-file-code-o"></i> Recent Projects',
+        title: 'Recent Projects',
         class: 'no-padding'
     });
+
+    // Installed phps widget
     $('#installed-phps').widget({
         url: '<?= $_url('/server/widget/phps') ?>',
-        title: '<i class="fa fa-file-code-o"></i> Installed PHPs',
+        title: 'Installed PHPs',
         class: 'no-padding'
     });
 });

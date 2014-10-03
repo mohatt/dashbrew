@@ -14,27 +14,43 @@ class HomeController extends Controller {
     protected function index() {
 
         $this->set('layout_title', 'Dashboard');
-        $this->set('stats', [
-          'phps'      => Stats::getPhpCount(),
-          'projects'  => Stats::getProjectCount(),
-          'databases' => Stats::getDatabaseCount(),
-          'uptime'    => Stats::getUptime(),
-        ]);
+    }
 
-        //exec('uptime -s', $o);
-        //var_dump($o);
-/*
-        //libfcgi0ldbl
-        exec('SCRIPT_NAME=/test.php \
-SCRIPT_FILENAME=/var/www/test.php \
-DOCUMENT_ROOT=/var/www \
-REQUEST_METHOD=GET \
-cgi-fcgi -bind -connect 127.0.0.1:9002', $o);
-        var_dump($o);
-        die;
-        */
+    protected function widget($type) {
 
-         //var_dump($this->request->getPath());
-         //var_dump($this->request->getRootUri());
+        $this->setLayout('ajax');
+
+        switch($type){
+            case 'stats-projects':
+                $this->set('count', Stats::getProjectCount());
+                $this->set('icon', 'file-code-o');
+                $this->set('comment', 'projects');
+                break;
+            case 'stats-databases':
+                $this->set('count', Stats::getDatabaseCount());
+                $this->set('icon', 'database');
+                $this->set('comment', 'databases');
+                break;
+            case 'stats-phps':
+                $this->set('count', Stats::getPhpsCount());
+                $this->set('icon', 'code-fork');
+                $this->set('comment', 'installed phps');
+                break;
+            case 'stats-uptime':
+                $uptime = Stats::getUptime();
+                if($uptime){
+                    $uptime = implode(" ", $uptime);
+                }
+                $this->set('count', $uptime);
+                $this->set('icon', 'clock-o');
+                $this->set('comment', 'uptime');
+                break;
+            default:
+                throw new \Exception("Unknow widget type supplied");
+        }
+
+        if(0 === strpos($type, 'stats-')){
+            $this->render('widget/stats');
+        }
     }
 }

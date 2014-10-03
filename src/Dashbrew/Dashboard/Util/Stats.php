@@ -8,7 +8,7 @@ use Dashbrew\Cli\Util\Projects;
 
 class Stats {
 
-    public static function getPhpCount(){
+    public static function getPhpsCount(){
 
         return count(Util::getInstalledPhps()) + 1;
     }
