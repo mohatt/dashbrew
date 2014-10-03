@@ -24,13 +24,13 @@
       <ul class="sidebar">
         <li class="sidebar-main">
           <a href="javascript:void(0);" id="toggle-sidebar">
-            Dashbrew
+            <?= $app->getName(); ?>
             <span class="menu-icon glyphicon glyphicon-transfer"></span>
           </a>
         </li>
         <li class="sidebar-title"><span>NAVIGATION</span></li>
         <li class="sidebar-list">
-          <a href="#">Dashboard <span class="menu-icon fa fa-tachometer"></span></a>
+          <a href="<?= $_url('/'); ?>">Dashboard <span class="menu-icon fa fa-tachometer"></span></a>
         </li>
         <?php if(!empty($layout_shortcuts)): ?>
         <li class="sidebar-title separator"><span>QUICK LINKS</span></li>

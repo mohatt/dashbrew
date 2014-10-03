@@ -10,8 +10,10 @@ use Dashbrew\Dashboard\View;
 $app = new Application([
     'debug' => true,
     'view' => new View,
-    'templates.path' => './views'
+    'templates.path' => __DIR__ . '/views'
 ]);
+
+$app->setName('Dashbrew');
 
 $collection = new ControllerCollection($app, 'Dashbrew\Dashboard\Controllers');
 $collection->addRoutes('home', ['/']);

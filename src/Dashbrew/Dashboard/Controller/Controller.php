@@ -142,6 +142,7 @@ abstract class Controller implements ControllerInterface {
         }
 
         $view = 'controllers/' . $this->name . '/' . $view;
+        $this->vars = array_merge($this->vars, ['app' => $this->app]);
         $output = $this->view->fetch($view, (array) $this->vars);
 
         $layout_vars = [
@@ -157,9 +158,13 @@ abstract class Controller implements ControllerInterface {
         }
 
         $layout_vars['layout_breadcrumbs'] = [
+          'app'        => $this->app->getName(),
           'controller' => Inflector::titleize($this->name),
-          'action'     => $layout_vars['layout_title']
         ];
+
+        if($this->action != 'index'){
+            $layout_vars['layout_breadcrumbs']['action'] = $layout_vars['layout_title'];
+        }
 
         $layout_vars['layout_shortcuts'] = Projects::getShortcuts();
 
