@@ -31,30 +31,41 @@
   function Widget(el, options) {
 
     var defaults = {
-      title: '',
+      title: null,
       url: '',
-      class: 'medium'
+      size: null,
+      class: null
     };
 
     var $opts = $.extend( {}, defaults, options);
     var $el  = $(el);
 
     $el.addClass('widget');
-    $el.html('<div class="widget-header">' + $opts.title + ' \
-                <button class="btn btn-sm btn-default pull-right"> \
-                  <span class="glyphicon glyphicon-refresh"></span> \
-                </button> \
-              </div> \
-              <div class="widget-body ' + $opts.class + '"> \
-                <div class="data"></div>\
-                <div class="loading"> \
-                   <div class="double-bounce1"></div> \
-                   <div class="double-bounce2"></div> \
-                </div> \
-              </div>');
+
+    if($opts.title != null){
+      $('<div class="widget-header">' + $opts.title + ' \
+           <button class="btn btn-sm btn-default pull-right"> \
+             <span class="glyphicon glyphicon-refresh"></span> \
+           </button> \
+         </div>')
+        .appendTo($el);
+    }
+
+    $('<div class="widget-body"> \
+         <div class="widget-data"></div> \
+         <div class="loading"> \
+            <div class="line"></div> \
+            <div class="break dot1"></div> \
+            <div class="break dot2"></div> \
+            <div class="break dot3"></div> \
+         </div> \
+       </div>')
+      .addClass($opts.size)
+      .addClass($opts.class)
+      .appendTo($el);
 
     var $elBody = $el.children('.widget-body'),
-        $elData = $elBody.children('.data'),
+        $elData = $elBody.children('.widget-data'),
         $elLoading = $elBody.children('.loading');
 
     var $load = function (url){
@@ -63,7 +74,6 @@
         type: 'GET',
         dataType: 'html',
         beforeSend: function(xhr, settings) {
-          $elData.html("");
           $elLoading.show();
         },
         success: function(data, textStatus, xhr) {
