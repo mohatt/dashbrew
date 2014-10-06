@@ -19,7 +19,7 @@ var paths = {
       minify: true
     },
     {
-      src: 'src/js/dashboard/dashboard.js',
+      src: 'src/js/dashboard.js',
       dest: 'assets/js/dashboard.min.js',
       minify: true
     },
