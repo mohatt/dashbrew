@@ -15,8 +15,6 @@ class ProjectsController extends Controller {
     protected function index() {
 
         $this->set('layout_title', 'Projects');
-        $projects = $this->__getProjects();
-        $this->set('projects', $projects);
     }
 
     protected function widget($type) {
@@ -24,44 +22,52 @@ class ProjectsController extends Controller {
         $this->setLayout('ajax');
 
         switch($type){
+            case 'grid':
+                $projects = $this->__getProjects();
+                break;
             case 'recent':
-                $projects = $this->__getProjects(8, '_modified');
-                $this->set('projects', $projects);
+                $projects = $this->__getProjects(8, '_modified', 'desc');
                 break;
             default:
                 throw new \Exception("Unknow widget type supplied");
         }
 
+        $this->set('projects', $projects);
         $this->render('widget/' . $type);
     }
+    protected function info($id) {
 
-    protected function __getProjects($limit = null, $sort = 'title'){
+        $this->setLayout('ajax');
+        $this->set('id', $id);
+        $this->set('project', $this->__getProject($id));
+    }
+
+    protected function __getProject($id){
+
+        $projects = Projects::get();
+        if(!isset($projects[$id])){
+            return false;
+        }
+
+        return $this->__initProjectInfo($id, $projects[$id]);
+    }
+
+    protected function __getProjects($limit = null, $sort = 'title', $dir = 'asc'){
 
         $projects = Projects::get();
         foreach($projects as $id => $project){
-            if(empty($project['title'])){
-                $projects[$id]['title'] = $id;
-            }
 
-            $projects[$id]['host'] = $id;
-            if(empty($project['vhost']['servername'])){
-                $projects[$id]['host'] = $project['vhost']['servername'];
-            }
-
-            $projects[$id]['http'] = 'http://' . $projects[$id]['host'] . '/';
-            if(!empty($project['vhost']['ssl'])){
-                $projects[$id]['https'] = 'https://' . $projects[$id]['host'] . '/';
-            }
+            $projects[$id] = $this->__initProjectInfo($id, $project);
         }
 
-        uasort($projects, function($a, $b) use($sort){
-            if ($a[$sort] > $b[$sort]) {
+        uasort($projects, function($a, $b) use($sort, $dir){
+            if (($dir == 'asc' && $a[$sort] < $b[$sort]) || ($dir == 'desc' && $a[$sort] > $b[$sort])) {
                 return -1;
-            } else if ($a[$sort] < $b[$sort]) {
-                return 1;
-            } else {
-                return 0;
             }
+            if (($dir == 'asc' && $a[$sort] > $b[$sort]) || ($dir == 'desc' && $a[$sort] < $b[$sort])) {
+                return 1;
+            }
+            return 0;
         });
 
         if(!empty($limit)){
@@ -69,5 +75,24 @@ class ProjectsController extends Controller {
         }
 
         return $projects;
+    }
+
+    protected function __initProjectInfo($id, $project){
+
+        if(empty($project['title'])){
+            $project['title'] = $id;
+        }
+
+        $project['host'] = $id;
+        if(empty($project['vhost']['servername'])){
+            $project['host'] = $project['vhost']['servername'];
+        }
+
+        $project['http'] = 'http://' . $project['host'] . '/';
+        if(!empty($project['vhost']['ssl'])){
+            $project['https'] = 'https://' . $project['host'] . '/';
+        }
+
+        return $project;
     }
 }

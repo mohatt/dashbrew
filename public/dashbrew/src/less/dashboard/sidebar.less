@@ -8,6 +8,7 @@
 ul.sidebar .sidebar-main a,
 .sidebar-footer,
 ul.sidebar .sidebar-list a:hover,
+ul.sidebar .sidebar-list a.active,
 #page-wrapper:not(.active) ul.sidebar .sidebar-title.separator {
     /* Sidebar header and footer color */
     background: @sidebarHeaderColor;
@@ -61,7 +62,8 @@ ul.sidebar {
             color: #b2bfdc;
             line-height: 40px;
         }
-        a:hover {
+        a:hover,
+        a.active {
             color: #fff;
             border-left: 3px solid #e99d1a;
             text-indent: 22px;
@@ -90,7 +92,8 @@ ul.sidebar {
             margin: 13px 0;
         }
         .sidebar-list {
-            a:hover {
+            a:hover,
+            a.active {
                 span {
                     border-left: 3px solid #e99d1a;
                     text-indent: 22px;

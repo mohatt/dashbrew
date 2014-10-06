@@ -21,8 +21,11 @@
         i {
             margin-right: 5px;
         }
+	    .btn {
+		    margin-left: 5px;
+	    }
         input {
-            width: 25%;
+            width: 30%;
         }
     }
     .widget-body {
@@ -44,9 +47,6 @@
         }
         .error {
             color: #ff0000;
-        }
-        button {
-            margin-left: 5px;
         }
         div.alert {
             margin-bottom: 10px;
@@ -101,7 +101,6 @@
 	.widget-body.no-padding .list-group {
 		margin-bottom: 0;
 		.list-group-item {
-			cursor: pointer;
 			border-radius: 0;
 			border-right: 0;
 			border-left: 0;
@@ -115,7 +114,15 @@
 				font-size: 16px;
 			}
 			.list-group-item-icon {
+				float: left;
 				font-size: 30px;
+				margin-right: .3em;
+			}
+			.list-group-item-btn {
+				position: absolute;
+				float: right;
+				right: 10px;
+				top: 16px;
 			}
 			.list-group-item-heading,
 			.list-group-item-subheading {
@@ -125,7 +132,7 @@
 			dd,
 			dd a {
 				font-size: 13px;
-				color: #999;
+				color: #7EA4C4;
 				text-shadow: 1px 1px #fff;
 			}
 			.list-group-item-extra {
@@ -140,6 +147,8 @@
 				dt {
 					font-weight: normal;
 					margin-top: 10px;
+					font-size: 13px;
+					text-transform: uppercase;
 				}
 			}
 			&:hover {

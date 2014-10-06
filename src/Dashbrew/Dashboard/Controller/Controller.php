@@ -105,13 +105,23 @@ abstract class Controller implements ControllerInterface {
 
         $baseUrl          = $this->app->request->getRootUri();
         $baseUrlaAbsolute = $this->request->getUrl() . $baseUrl;
+        $currentPath      = $this->app->request->getPath();
+        $helpersPath      = $this->app->view()->getTemplatePathname('helpers/');
+
+        $this->view->set('_helper', function($path) use($helpersPath){
+            return require_once $helpersPath . $path . '.php';
+        });
 
         $this->view->set('_asset', function($path, $absolute = false) use($baseUrl, $baseUrlaAbsolute){
-            return ($absolute ? $baseUrlaAbsolute : $baseUrl) . '/assets/' . $path;
+            return ($absolute ? $baseUrlaAbsolute : $baseUrl) . '/assets' . $path;
         });
 
         $this->view->set('_url', function($path, $absolute = false) use($baseUrl, $baseUrlaAbsolute){
             return ($absolute ? $baseUrlaAbsolute : $baseUrl) . $path;
+        });
+
+        $this->view->set('_is_url', function($path) use($currentPath){
+            return $path == $currentPath;
         });
     }
 

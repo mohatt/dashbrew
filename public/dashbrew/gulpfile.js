@@ -20,8 +20,8 @@ var paths = {
     },
     {
       src: 'src/js/dashboard/dashboard.js',
-      dest: 'assets/js/dashboard.js',
-      minify: false
+      dest: 'assets/js/dashboard.min.js',
+      minify: true
     },
     {
       src: 'src/bower_components/jquery.cookie/jquery.cookie.js',

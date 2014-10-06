@@ -1,21 +1,18 @@
-<ul class="projects-list list-group">
-    <li class="list-group-item" onclick="$.switchListItemExtra(this)">
-        <i class="list-group-item-icon fa fa-code-fork pull-left"></i>
+<ul class="list-group">
+    <li class="list-group-item">
+        <i class="list-group-item-icon fa fa-code-fork"></i>
         <h4 class="list-group-item-heading"><?= $systemPhp ?></h4>
         <div class="list-group-item-subheading">
             <span class="label label-info">system</span>
             <span class="label label-success">running</span>
         </div>
-        <div class="list-group-item-extra">
-            <dl>
-                <dt>PHP Info</dt>
-                <dd><a href="<?= $_url("server/phpinfo/system") ?>" target="_blank">View</a></dd>
-            </dl>
-        </div>
+        <a class="list-group-item-btn btn btn-default btn-sm" href="<?= $_url("/server/phpinfo/system") ?>" target="_blank">
+            <span class="fa fa-external-link"></span> Info
+        </a>
     </li>
     <?php foreach($phps as $version => $meta): ?>
-    <li class="list-group-item" onclick="$.switchListItemExtra(this)">
-        <i class="list-group-item-icon fa fa-code-fork pull-left"></i>
+    <li class="list-group-item">
+        <i class="list-group-item-icon fa fa-code-fork"></i>
         <h4 class="list-group-item-heading"><?= $version ?></h4>
         <div class="list-group-item-subheading">
             <span class="label label-info">phpbrew</span>
@@ -28,18 +25,9 @@
             <span class="label label-danger">stopped</span>
             <?php endif; ?>
         </div>
-        <div class="list-group-item-extra">
-            <dl>
-                <dt>PHP Info</dt>
-                <dd><a href="<?= $_url("server/phpinfo/{$version}") ?>" target="_blank">View</a></dd>
-                <dt>Variants</dt>
-                <?php if(empty($meta['variants'])): ?>
-                    <dd>None</dd>
-                <?php else: ?>
-                    <dd><?= $meta['variants'] ?></dd>
-                <?php endif; ?>
-            </dl>
-        </div>
+        <a class="list-group-item-btn btn btn-default btn-sm" href="<?= $_url("/server/phpinfo/{$version}") ?>" target="_blank">
+            <span class="fa fa-external-link"></span> Info
+        </a>
     </li>
     <?php endforeach; ?>
 </ul>
