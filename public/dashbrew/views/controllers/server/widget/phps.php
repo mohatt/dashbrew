@@ -25,9 +25,11 @@
             <span class="label label-danger">stopped</span>
             <?php endif; ?>
         </div>
+        <?php if(!empty($meta['running'])): ?>
         <a class="list-group-item-btn btn btn-default btn-sm" href="<?= $_url("/server/phpinfo/{$version}") ?>" target="_blank">
             <span class="fa fa-external-link"></span> Info
         </a>
+        <?php endif; ?>
     </li>
     <?php endforeach; ?>
 </ul>
