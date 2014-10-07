@@ -23,7 +23,7 @@ class ProjectsProcessTask extends Task {
     public function run() {
 
         if(!$this->command instanceof ProvisionCommand){
-            throw new \Exception("The Config task can only be run by the Provision command.");
+            throw new \Exception("The ProjectsProcess task can only be run by the Provision command.");
         }
 
         $projects = Registry::get('projects');

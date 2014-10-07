@@ -29,7 +29,7 @@ class ConfigSyncTask extends Task {
     public function run() {
 
         if(!$this->command instanceof ProvisionCommand){
-            throw new \Exception("The Config task can only be run by the Provision command.");
+            throw new \Exception("The ConfigSync task can only be run by the Provision command.");
         }
 
         $this->output->writeDebug("Checking config files");

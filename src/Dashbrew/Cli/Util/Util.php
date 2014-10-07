@@ -159,7 +159,7 @@ class Util {
      * @param string $command
      * @param OutputInterface $output
      * @param bool $disable_stderr
-     * @param null|bool $force_stdout can be set to `true` to disable stdout, `false` to
+     * @param null|bool $force_stdout can be set to `true` to enable stdout, `false` to
      *  disable stdout or `null` to send stdout according to current verbosity level.
      * @param int $timeout
      * @param null $input

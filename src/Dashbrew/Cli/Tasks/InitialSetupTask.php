@@ -19,7 +19,7 @@ class InitialSetupTask extends Task {
     public function run() {
 
         if(!$this->command instanceof ProvisionCommand){
-            throw new \Exception("The Config task can only be run by the Provision command.");
+            throw new \Exception("The InitialSetup task can only be run by the Provision command.");
         }
 
         $lock = '/etc/dashbrew/initial-setup.lock';

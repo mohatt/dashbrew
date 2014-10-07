@@ -25,7 +25,7 @@ class InitTask extends Task {
     public function run() {
 
         if(!$this->command instanceof ProvisionCommand){
-            throw new \Exception("The Config task can only be run by the Provision command.");
+            throw new \Exception("The Init task can only be run by the Provision command.");
         }
 
         // Parse & initialize config.yaml file
