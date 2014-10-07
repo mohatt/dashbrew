@@ -103,7 +103,7 @@ class ServerController extends Controller {
 
             $pidfile = '/opt/phpbrew/php/php-' . $version . '/var/run/php-fpm.pid';
             $phps[$version]['running'] = false;
-            if(trim(file_get_contents($pidfile)) != ""){
+            if(file_exists($pidfile) && trim(file_get_contents($pidfile)) != ""){
                 $phps[$version]['running'] = true;
             }
         }
