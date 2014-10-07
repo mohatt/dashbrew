@@ -81,6 +81,9 @@ div.input-mask {
 .label {
   font-weight: normal;
 }
+.form-group:last-child {
+  margin-bottom: 0;
+}
 .loading {
   position: absolute;
   width: 100%;
@@ -491,6 +494,9 @@ ul.sidebar .sidebar-list .menu-icon {
 .widget .widget-header input {
   width: 30%;
 }
+.widget .widget-header .widget-btn-reload {
+  float: right;
+}
 .widget .widget-body {
   padding: 20px;
   min-height: 105px;
@@ -620,6 +626,34 @@ ul.sidebar .sidebar-list .menu-icon {
 }
 .widget .widget-body.no-padding .list-group .list-group-item.active .list-group-item-extra {
   display: block;
+}
+#widget-coderunner-input .code-version {
+  width: 200px;
+}
+#widget-coderunner-input .code-editor {
+  width: 100%;
+  height: auto;
+}
+#widget-coderunner-input .code-editor.form-control {
+  padding: 2px;
+}
+#widget-coderunner-input .code-editor .CodeMirror {
+  width: 100%;
+  height: 350px;
+}
+#widget-coderunner-output .code-output.form-control {
+  width: 100%;
+  padding: 2px;
+  height: auto;
+}
+#widget-coderunner-output .code-output div {
+  padding: 10px;
+  white-space: pre;
+  font-family: monospace;
+  min-height: 150px;
+  max-height: 455px;
+  line-height: 1.5;
+  overflow: auto;
 }
 /* Hamburg Menu */
 @media only screen and (max-width: 560px) {

@@ -36,6 +36,10 @@
         <li class="sidebar-list">
           <a href="<?= $_url('/projects'); ?>" class="<?= $_is_url('/projects') ? 'active' : ''; ?>">Projects <span class="menu-icon fa fa-file-code-o"></span></a>
         </li>
+        <li class="sidebar-title separator"><span>Utilities</span></li>
+        <li class="sidebar-list">
+            <a href="<?= $_url('/server/coderunner'); ?>" class="<?= $_is_url('/server/coderunner') ? 'active' : ''; ?>">Code Runner <span class="menu-icon fa fa-terminal"></span></a>
+        </li>
         <?php if(!empty($layout_shortcuts)): ?>
         <li class="sidebar-title separator"><span>QUICK LINKS</span></li>
         <?php foreach($layout_shortcuts as $shortcut): ?>

@@ -85,6 +85,52 @@ class Util {
         return $output[0];
     }
 
+    public static function runPhpCode($code, $version = 'system'){
+
+        if($version == 'system'){
+            $fpmPort = '9001';
+        }
+        else {
+            $phps = Config::get('php::builds');
+            $phpsInstalled = Util::getInstalledPhps();
+            if(empty($phps[$version]) || !in_array("php-{$version}", $phpsInstalled)){
+                throw new \Exception("Unable to find php $version");
+            }
+
+            if(empty($phps[$version]['fpm']['port'])){
+                throw new \Exception("Unable to find fpm port for php $version");
+            }
+
+            $fpmPort = $phps[$version]['fpm']['port'];
+        }
+
+        $filename = uniqid('coderunner_', true) . '.php';
+        $filepath = '/tmp/' . $filename;
+
+        $fs = self::getFilesystem();
+        $fs->touch($filepath);
+        $fs->chmod($filepath, 0777);
+        $fs->write($filepath, $code);
+
+        $scname   = '/' . $filename;
+        $scfname  = $filepath;
+        $scroot   = dirname($scfname);
+
+        $cmd = 'SCRIPT_NAME=%s \
+                SCRIPT_FILENAME=%s \
+                DOCUMENT_ROOT=%s \
+                REQUEST_METHOD=GET \
+                cgi-fcgi -bind -connect 127.0.0.1:%s';
+
+        $cmd = sprintf($cmd, $scname, $scfname, $scroot, $fpmPort);
+
+        self::exec($cmd, false, $output);
+
+        $fs->remove($filepath);
+
+        return $output;
+    }
+
     /**
      * @param string $command
      * @param bool $silent

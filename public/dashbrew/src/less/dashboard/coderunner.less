@@ -1,0 +1,34 @@
+#widget-coderunner-input {
+	.code-version {
+		width: 200px;
+	}
+	.code-editor {
+		width: 100%;
+		height: auto;
+		&.form-control {
+			padding: 2px;
+		}
+		.CodeMirror {
+			width: 100%;
+			height: 350px;
+		}
+	}
+}
+#widget-coderunner-output {
+	.code-output {
+		&.form-control {
+			width: 100%;
+			padding: 2px;
+			height: auto;
+		}
+		div {
+			padding: 10px;
+			white-space: pre;
+			font-family: monospace;
+			min-height: 150px;
+			max-height: 455px;
+			line-height: 1.5;
+			overflow: auto;
+		}
+	}
+}

@@ -10,6 +10,7 @@
     "jquery.cookie": "~1.4.0",
     "font-awesome": "~4.2.0",
     "list.js": "~1.1.1",
-    "list.pagination.js": "~0.1.1"
+    "list.pagination.js": "~0.1.1",
+    "codemirror": "~4.6.0"
   }
 }

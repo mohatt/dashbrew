@@ -27,6 +27,11 @@ var paths = {
       src: 'src/bower_components/jquery.cookie/jquery.cookie.js',
       dest: 'assets/lib/jquery/jquery.cookie.min.js',
       minify: true
+    },
+    {
+      src: 'src/js/codemirror.js',
+      dest: 'assets/lib/codemirror/codemirror.min.js',
+      minify: true
     }
   ],
   less: [
@@ -44,6 +49,11 @@ var paths = {
       src: 'src/less/dashboard/dashboard.less',
       dest: 'assets/css/dashboard.css',
       minify: false
+    },
+    {
+      src: 'src/less/codemirror.less',
+      dest: 'assets/lib/codemirror/codemirror.min.css',
+      minify: true
     }
   ],
   lib: [
