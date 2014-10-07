@@ -25,15 +25,19 @@ $(document).ready(function(){
     // Stats widgets
     $('#widget-stats-projects').widget({
         url: '<?= $_url('/home/widget/stats-projects') ?>',
+        header: false
     });
     $('#widget-stats-databases').widget({
         url: '<?= $_url('/home/widget/stats-databases') ?>',
+        header: false
     });
     $('#widget-stats-phps').widget({
         url: '<?= $_url('/home/widget/stats-phps') ?>',
+        header: false
     });
     $('#widget-stats-uptime').widget({
         url: '<?= $_url('/home/widget/stats-uptime') ?>',
+        header: false
     });
 
     // Recent projects widget

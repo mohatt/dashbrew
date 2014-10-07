@@ -23,8 +23,49 @@ $(document).ready(function(){
                     </ul> \
                 </div> \
                 <div class="clearfix"></div>',
-        onSuccess: function($el){
-            var userList = new List('projects-grid', {
+        onInit: function($widget){
+
+            var $header = $widget.header;
+
+            $header.find('input:first').on('input', function(){
+                if(!$widget.obj.list){
+                    return false;
+                }
+
+                $widget.obj.list.search(this.value);
+            });
+
+            $header.find('li[data-sort]').on('click', function(){
+                if(!$widget.obj.list){
+                    return false;
+                }
+
+                var $this = $(this);
+                $widget.obj.list.sort('entry-' + $this.data('sort'), {
+                    order: $header.find('li.active[data-sortdir]').data('sortdir')
+                });
+
+                $this.siblings('[data-sort]').removeClass('active');
+                $this.addClass('active');
+            });
+
+            $header.find('li[data-sortdir]').on('click', function(){
+                if(!$widget.obj.list){
+                    return false;
+                }
+
+                var $this = $(this);
+                $widget.obj.list.sort('entry-' + $header.find('li.active[data-sort]').data('sort'), {
+                    order: $this.data('sortdir')
+                });
+
+                $this.siblings('[data-sortdir]').removeClass('active');
+                $this.addClass('active');
+            });
+        },
+        onSuccess: function($widget){
+
+            $widget.obj.list = new List('projects-grid', {
                 valueNames: [
                     'entry-title',
                     'entry-url',
@@ -38,37 +79,13 @@ $(document).ready(function(){
                 ]
             });
 
-            var $wheader = $el.find('.widget-header');
+            $widget.header.find('input:first').trigger('input');
 
-            $wheader.find('input:first').on('input', function(){
-                userList.search(this.value);
-            }).trigger('input');
-
-            userList.sort('entry-' + $wheader.find("li.active[data-sort]").data('sort'), {
-                order: $wheader.find("li.active[data-sortdir]").data('sortdir')
+            $widget.obj.list.sort('entry-' + $widget.header.find("li.active[data-sort]").data('sort'), {
+                order: $widget.header.find("li.active[data-sortdir]").data('sortdir')
             });
 
-            $wheader.find('li[data-sort]').on('click', function(){
-                var $this = $(this);
-                userList.sort('entry-' + $this.data('sort'), {
-                    order: $wheader.find('li.active[data-sortdir]').data('sortdir')
-                });
-
-                $this.siblings('[data-sort]').removeClass('active');
-                $this.addClass('active');
-            });
-
-            $wheader.find('li[data-sortdir]').on('click', function(){
-                var $this = $(this);
-                userList.sort('entry-' + $wheader.find('li.active[data-sort]').data('sort'), {
-                    order: $this.data('sortdir')
-                });
-
-                $this.siblings('[data-sortdir]').removeClass('active');
-                $this.addClass('active');
-            });
-
-            var $pagination = $el.find('ul.pagination');
+            var $pagination = $widget.data.find('ul.pagination');
             if($pagination.find('li').length <= 1){
                 $pagination.hide();
             }

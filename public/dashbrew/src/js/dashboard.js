@@ -31,73 +31,107 @@
   function Widget(el, options) {
 
     var defaults = {
-      title: null,
+      header: true,
+      title: '',
       url: '',
-      size: null,
-      class: null,
+      ajax: {},
+      size: '',
+      class: '',
+      onInit: null,
+      onBeforeSend: null,
+      onError: null,
+      onComplete: null,
       onSuccess: null
     };
 
-    var $opts = $.extend( {}, defaults, options);
-    var $el  = $(el);
+    var $this = this;
 
-    $el.addClass('widget');
+    $this.opts    = $.extend( {}, defaults, options);
+    $this.el      = $(el);
+    $this.header  = null;
+    $this.body    = null;
+    $this.data    = null;
+    $this.loading = null;
+    $this.obj     = {};
 
-    if($opts.title != null){
-      $('<div class="widget-header">' +
-           '<button class="btn btn-sm btn-default pull-right">' +
-             '<span class="glyphicon glyphicon-refresh"></span>' +
-           '</button>' +
-           $opts.title +
-        '</div>')
-        .appendTo($el);
-    }
+    $this.el.addClass('widget');
 
-    $('<div class="widget-body">' +
-         '<div class="widget-data"></div>' +
-         '<div class="loading">' +
+    $this.init = function (){
+      $this.el.html('');
+
+      if($this.opts.header){
+        $('<div class="widget-header">' +
+            '<button class="btn btn-sm btn-default widget-btn-reload">' +
+              '<span class="glyphicon glyphicon-refresh"></span>' +
+            '</button>' +
+            $this.opts.title +
+          '</div>')
+          .appendTo($this.el);
+      }
+
+      $('<div class="widget-body">' +
+          '<div class="widget-data"></div>' +
+          '<div class="loading">' +
             '<div class="line"></div>' +
             '<div class="break dot1"></div>' +
             '<div class="break dot2"></div>' +
             '<div class="break dot3"></div>' +
-         '</div>' +
-      '</div>')
-      .addClass($opts.size)
-      .addClass($opts.class)
-      .appendTo($el);
+          '</div>' +
+        '</div>')
+        .addClass($this.opts.size)
+        .addClass($this.opts.class)
+        .appendTo($this.el);
 
-    var $elBody = $el.children('.widget-body'),
-        $elData = $elBody.children('.widget-data'),
-        $elLoading = $elBody.children('.loading');
+      $this.header  = $this.el.children('.widget-header');
+      $this.body    = $this.el.children('.widget-body');
+      $this.data    = $this.body.children('.widget-data');
+      $this.loading = $this.body.children('.loading');
 
-    var $load = function (url){
-      $.ajax({
-        url: url || $opts.url,
+      if($this.header){
+        $this.header.children('button.widget-btn-reload').click(function(){
+          $this.load();
+        });
+      }
+
+      if(typeof $this.opts.onInit == 'function'){
+        $this.opts.onInit($this);
+      }
+    };
+
+    $this.load = function (url, ajax){
+      $.ajax($.extend({
+        url: url || $this.opts.url,
         type: 'GET',
         dataType: 'html',
         beforeSend: function(xhr, settings) {
-          $elLoading.show();
+          $this.loading.show();
+          if(typeof $this.opts.onBeforeSend == 'function'){
+            $this.opts.onBeforeSend($this);
+          }
         },
         success: function(data, textStatus, xhr) {
-          $elData.html(data);
-          if(typeof $opts.onSuccess == 'function'){
-            $opts.onSuccess($el);
+          $this.data.html(data);
+          if(typeof $this.opts.onSuccess == 'function'){
+            $this.opts.onSuccess($this);
           }
         },
         error: function(xhr, textStatus, errorThrown) {
-          $elData.html(errorThrown);
+          $this.data.html(errorThrown);
+          if(typeof $this.opts.onError == 'function'){
+            $this.opts.onError($this);
+          }
         },
         complete: function(xhr, textStatus) {
-          $elLoading.hide();
+          $this.loading.hide();
+          if(typeof $this.opts.onComplete == 'function'){
+            $this.opts.onComplete($this);
+          }
         }
-      });
+      }, $this.opts.ajax, ajax || {}));
     };
 
-    $load();
-
-    $el.children('.widget-header').children('button').click(function(){
-      $load();
-    });
+    $this.init();
+    $this.load();
   }
 
   function Window(url, options) {
