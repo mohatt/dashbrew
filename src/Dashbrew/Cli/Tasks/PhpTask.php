@@ -22,7 +22,7 @@ class PhpTask extends Task {
     public function run() {
 
         if(!$this->command instanceof ProvisionCommand){
-            throw new \Exception("The PHP task can only be run by the Provision command.");
+            throw new \Exception("The Php task can only be run by the Provision command.");
         }
 
         $phps = Config::get('php::builds');
@@ -37,7 +37,13 @@ class PhpTask extends Task {
             $meta['_is_installed'] = in_array('php-' . $version, $installedPhps);
             $meta['_old'] = isset($phpsOld[$version]) ? $phpsOld[$version] : [];
 
-            $this->managePhp($meta);
+            try {
+                $this->managePhp($meta);
+            } catch(\Exception $e){
+                $this->output->writeError($e->getMessage());
+                continue;
+            }
+
             $this->manageExtensions($meta);
             $this->manageFpm($meta);
 
@@ -117,6 +123,14 @@ class PhpTask extends Task {
         }
 
         foreach ($meta['extensions'] as $extname => $extmeta) {
+            if(empty($extmeta['version'])){
+                $this->output->writeError("Invalid extension definition for $extname extension, missing 'version' paramater");
+                continue;
+            }
+
+            if(!isset($extmeta['enabled'])){
+                $extmeta['enabled'] = true;
+            }
 
             $ini = $meta['_path'] . "/var/db/$extname.ini";
             $ini_disabled = $meta['_path'] . "/var/db/$extname.ini.disabled";
@@ -124,12 +138,13 @@ class PhpTask extends Task {
             $ext_installed = file_exists($ini) || file_exists($ini_disabled);
             if(!$ext_installed || (isset($meta['_old']['extensions'][$extname]['version']) && $meta['_old']['extensions'][$extname]['version'] !== $extmeta['version'])){
                 $this->output->writeInfo("Installing $extname extension");
-                $proc = $this->runScript('ext.install', true, $meta['_version'], $extname);
+                $proc = $this->runScript('ext.install', true, $meta['_version'], $extname, $extmeta['version']);
                 if($proc->isSuccessful()){
                     $this->output->writeInfo("Successfully installed $extname extension");
                 }
                 else {
-                    throw new \Exception("Unable to install $extname extension");
+                    $this->output->writeError("Failed installing $extname extension");
+                    continue;
                 }
             }
 
@@ -141,7 +156,7 @@ class PhpTask extends Task {
                     $this->output->writeInfo("Successfully enabled $extname extension");
                 }
                 else {
-                    throw new \Exception("Unable to enable $extname extension");
+                    $this->output->writeError("Failed enabling $extname extension");
                 }
             }
 
@@ -152,7 +167,7 @@ class PhpTask extends Task {
                     $this->output->writeInfo("Successfully disabled $extname extension");
                 }
                 else {
-                    throw new \Exception("Unable to disable $extname extension");
+                    $this->output->writeError("Failed disabling $extname extension");
                 }
             }
         }

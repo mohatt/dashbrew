@@ -6,6 +6,7 @@ source $DIR/init.sh
 
 PHPVERSION=$(echo "$1")
 EXTNAME=$(echo "$2")
+EXTVERSION=$(echo "$3")
 
 phpbrew switch ${PHPVERSION}
-phpbrew ext install ${EXTNAME}
+phpbrew ext install ${EXTNAME} ${EXTVERSION}
