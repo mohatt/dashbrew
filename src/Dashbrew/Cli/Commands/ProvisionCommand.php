@@ -6,6 +6,7 @@ use Dashbrew\Cli\Command\Command;
 use Dashbrew\Cli\Input\InputInterface;
 use Dashbrew\Cli\Output\OutputInterface;
 use Dashbrew\Cli\Task\Runner as TaskRunner;
+use Dashbrew\Cli\Util\Util;
 use Dashbrew\Cli\Tasks\InitialSetupTask;
 use Dashbrew\Cli\Tasks\InitTask;
 use Dashbrew\Cli\Tasks\ConfigDefaultsTask;
@@ -15,8 +16,7 @@ use Dashbrew\Cli\Tasks\PhpTask;
 use Dashbrew\Cli\Tasks\ProjectsInitTask;
 use Dashbrew\Cli\Tasks\ProjectsProcessTask;
 use Dashbrew\Cli\Tasks\ServiceRestartTask;
-use Dashbrew\Cli\Util\Config;
-use Dashbrew\Cli\Util\Util;
+use Dashbrew\Cli\Tasks\EndTask;
 
 class ProvisionCommand extends Command {
 
@@ -32,9 +32,6 @@ class ProvisionCommand extends Command {
 
         // Run provisioning tasks
         $this->runTasks($input, $output);
-
-        // Write current config file to be used in the next provisioning process
-        Config::writeTemp();
 
         $duration = round($sw->stop('provision')->getDuration() / 1000, 2);
         $duration_unit = 's';
@@ -62,6 +59,7 @@ class ProvisionCommand extends Command {
         $runner->addTask(new ProjectsProcessTask);
         $runner->addTask(new ServiceRestartTask);
         $runner->addTask(new ConfigSyncTask);
+        $runner->addTask(new EndTask);
 
         $runner->run();
     }

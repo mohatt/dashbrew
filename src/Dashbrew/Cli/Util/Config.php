@@ -22,7 +22,7 @@ class Config {
      * The path to the previous version of the config file, it is being used to
      *  detect deleted config enteries
      */
-    const CONFIG_FILE_TEMP  = '/vagrant/provision/main/etc/config.yaml.old';
+    const CONFIG_FILE_OLD   = '/vagrant/provision/main/etc/config.yaml.old';
 
     /**
      * @var array
@@ -44,8 +44,8 @@ class Config {
         self::$config    = $yaml->parse(file_get_contents(self::CONFIG_FILE));
         self::$configOld = [];
 
-        if($mergeOld && file_exists(self::CONFIG_FILE_TEMP)){
-            self::$configOld = $yaml->parse(file_get_contents(self::CONFIG_FILE_TEMP));
+        if($mergeOld && file_exists(self::CONFIG_FILE_OLD)){
+            self::$configOld = $yaml->parse(file_get_contents(self::CONFIG_FILE_OLD));
             self::$config    = self::mergeOldConfig();
         }
     }
@@ -112,9 +112,9 @@ class Config {
     /**
      *
      */
-    public static function writeTemp() {
+    public static function writeOld() {
 
-        return Util::getFilesystem()->copy(self::CONFIG_FILE, self::CONFIG_FILE_TEMP, true, 'vagrant');
+        return Util::getFilesystem()->copy(self::CONFIG_FILE, self::CONFIG_FILE_OLD, true, 'vagrant');
     }
 
     /**
