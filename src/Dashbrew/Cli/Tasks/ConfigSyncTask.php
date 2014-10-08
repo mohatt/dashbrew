@@ -55,6 +55,10 @@ class ConfigSyncTask extends Task {
             $source_file = $file['source'];
             $target_file = $file['path'];
 
+            if($source_file == $target_file){
+                continue;
+            }
+
             if(file_exists($target_file)){
                 if(md5_file($source_file) === md5_file($target_file)){
                     continue;
@@ -103,12 +107,17 @@ class ConfigSyncTask extends Task {
                 continue;
             }
 
+
             $source_dir       = $dir['source'];
             $source_dir_owner = 'vagrant';
             $source_dir_group = 'vagrant';
             $target_dir       = $dir['path'];
             $target_dir_owner = !empty($dir['owner']) ? $dir['owner'] : null;
             $target_dir_group = !empty($dir['group']) ? $dir['group'] : null;
+
+            if($source_dir == $target_dir){
+                continue;
+            }
 
             $dir_sync_status = ['old' => [], 'new' => []];
             if(isset($sync_status[$target_dir])){
