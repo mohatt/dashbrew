@@ -9,4 +9,4 @@ EXTNAME=$(echo "$2")
 EXTVERSION=$(echo "$3")
 
 phpbrew switch ${PHPVERSION}
-phpbrew ext install ${EXTNAME} ${EXTVERSION}
+phpbrew ext install ${EXTNAME} ${EXTVERSION} 2>&1
