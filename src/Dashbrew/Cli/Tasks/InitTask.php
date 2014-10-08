@@ -41,6 +41,13 @@ class InitTask extends Task {
 
         $config_files = [
             [
+                'path'    => null,
+                'source'  => '/vagrant/config/config.yaml',
+                'default' => '/vagrant/provision/main/config/config.yaml',
+                'owner'   => null,
+                'group'   => null,
+            ],
+            [
                 'path'    => '/etc/monit/monitrc',
                 'source'  => '/vagrant/config/monit/monitrc',
                 'default' => '/vagrant/provision/main/config/monit/monitrc',
