@@ -35,7 +35,6 @@ class InitialSetupTask extends Task {
           'vagrant'
         );
 
-        $fs->mkdir(dirname($lock));
         $fs->touch($lock);
     }
 }
