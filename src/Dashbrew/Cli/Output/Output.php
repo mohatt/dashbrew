@@ -44,7 +44,7 @@ class Output extends ConsoleOutput implements OutputInterface {
      */
     public function writeStdout($message) {
 
-        return $this->writeWithPrefix($this, $message, self::PREFIX_STDOUT, false);
+        return $this->write($message, false);
     }
 
     /**
@@ -52,7 +52,7 @@ class Output extends ConsoleOutput implements OutputInterface {
      */
     public function writeStderr($message) {
 
-        return $this->writeWithPrefix($this->getErrorOutput(), $message, self::PREFIX_STDERR, false);
+        return $this->getErrorOutput()->write($message, false);
     }
 
     /**
@@ -60,6 +60,6 @@ class Output extends ConsoleOutput implements OutputInterface {
      */
     protected function writeWithPrefix($output, $message, $prefix, $newline = false) {
 
-        return $output->write("[$prefix] $message", $newline, self::OUTPUT_NORMAL);
+        return $output->write("[$prefix] $message", $newline);
     }
 }
