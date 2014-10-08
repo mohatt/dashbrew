@@ -22,7 +22,7 @@ class InitialSetupTask extends Task {
             throw new \Exception("The InitialSetup task can only be run by the Provision command.");
         }
 
-        $lock = '/etc/dashbrew/initial-setup.lock';
+        $lock = '/etc/dashbrew/initialsetup.lock';
         if(file_exists($lock)){
             return;
         }
