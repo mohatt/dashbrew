@@ -7,5 +7,5 @@ source $DIR/init.sh
 PHPVERSION=$(echo "$1")
 EXTNAME=$(echo "$2")
 
-phpbrew switch ${PHPVERSION}
+phpbrew use ${PHPVERSION}
 phpbrew ext disable ${EXTNAME}
