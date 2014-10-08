@@ -7,7 +7,7 @@
             </optgroup>
             <optgroup label="Phpbrew">
             <?php foreach($phps as $version => $meta): ?>
-                <option value="<?= $version ?>"><?= $version ?></option>
+                <option value="<?= $version ?>" <?= !$meta['running'] ? 'disabled' : '' ?>><?= $version ?></option>
             <?php endforeach; ?>
             </optgroup>
         </select>
