@@ -43,7 +43,7 @@ class InitTask extends Task {
             [
                 'path'    => '/etc/monit/monitrc',
                 'source'  => '/vagrant/config/monit/monitrc',
-                'default' => '/vagrant/provision/main/config/monit/monitrc',
+                'default' => '/etc/monit/monitrc',
                 'owner'   => 'root',
                 'group'   => 'root',
             ],
@@ -109,7 +109,7 @@ class InitTask extends Task {
             [
                 'path'    => '/etc/monit/conf.d',
                 'source'  => '/vagrant/config/monit/conf.d',
-                'default' => '/vagrant/provision/main/config/monit/conf.d',
+                'default' => '/etc/monit/conf.d',
                 'owner'   => 'root',
                 'group'   => 'root',
             ],
