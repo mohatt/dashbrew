@@ -90,9 +90,9 @@ class InitTask extends Task {
                 'group'   => 'vagrant',
             ],
             [
-                'path'    => '/opt/pma/config.inc.php',
-                'source'  => '/vagrant/config/pma/config.inc.php',
-                'default' => '/opt/pma/config.inc.php',
+                'path'    => '/usr/share/phpmyadmin/config.inc.php',
+                'source'  => '/vagrant/config/phpmyadmin/config.inc.php',
+                'default' => '/usr/share/phpmyadmin/config.inc.php',
                 'owner'   => 'vagrant',
                 'group'   => 'www-data',
             ],

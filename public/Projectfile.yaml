@@ -39,7 +39,7 @@ phpmyadmin.dev:
       url: http://phpmyadmin.dev/
   vhost:
     servername: phpmyadmin.dev
-    docroot: /opt/pma
+    docroot: /usr/share/phpmyadmin
 
 mailcatcher.dev:
   title: Mailcatcher
