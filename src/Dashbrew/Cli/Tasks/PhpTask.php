@@ -217,20 +217,20 @@ class PhpTask extends Task {
             $this->output->writeInfo("Configured fpm");
         }
 
-        $monit_conf_template = Util::renderTemplate('monit/conf.d/php-fpm.conf.template', [
+        $monit_conf_template = Util::renderTemplate('monit/conf.d/php-fpm.conf.php', [
             'version' => $meta['_version'],
             'port'    => $meta['fpm']['port'],
-        ], true);
+        ]);
 
         if(!file_exists($monit_conf_file) || md5($monit_conf_template) !== md5_file($monit_conf_file)){
             $this->output->writeInfo("Writing monit php-fpm config file '$monit_conf_file'");
             $fs->write($monit_conf_file, $monit_conf_template, 'root');
         }
 
-        $apache_conf_template = Util::renderTemplate('apache/php/php-fpm.conf.template', [
+        $apache_conf_template = Util::renderTemplate('apache/php/php-fpm.conf.php', [
             'version' => $meta['_version'],
             'port'    => $meta['fpm']['port'],
-        ], true);
+        ]);
 
         if(!file_exists($apache_conf_file) || md5($apache_conf_template) !== md5_file($apache_conf_file)){
             $this->output->writeInfo("Writing apache php-fpm config file '$apache_conf_file'");

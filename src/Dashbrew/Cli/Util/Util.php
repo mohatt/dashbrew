@@ -15,26 +15,14 @@ class Util {
     /**
      * @param string $template
      * @param array $vars
-     * @param bool $simple
      * @throws \Exception
      * @return string
      */
-    public static function renderTemplate($template, array $vars = [], $simple = true) {
+    public static function renderTemplate($template, array $vars = []) {
 
         $template = '/vagrant/provision/main/templates/' . ltrim($template, '/');
         if(!file_exists($template)){
             throw new \Exception("Unable to read template file '$template'");
-        }
-
-        if($simple){
-            $s = [];
-            $r = [];
-            foreach($vars as $varname => $varvalue){
-                $s[] = "{{ $varname }}";
-                $r[] = strval($varvalue);
-            }
-
-            return str_replace($s, $r, file_get_contents($template));
         }
 
         $render_template = function() use($template, $vars) {

@@ -146,7 +146,7 @@ class ProjectsProcessTask extends Task {
             'vhost'              => $vhost,
             '_project_id'        => $id,
             '_project_file_path' => $project['_path'],
-        ], false);
+        ]);
 
         $vhost_file_save = false;
         if(!file_exists($vhost_file) || md5($vhost_file_content) !== md5_file($vhost_file)){
@@ -172,7 +172,7 @@ class ProjectsProcessTask extends Task {
                 'vhost'              => $vhost_ssl,
                 '_project_id'        => $id,
                 '_project_file_path' => $project['_path'],
-            ], false);
+            ]);
 
             $vhost_ssl_file_save = false;
             if(!file_exists($vhost_ssl_file) || md5($vhost_ssl_file_content) !== md5_file($vhost_ssl_file)){
