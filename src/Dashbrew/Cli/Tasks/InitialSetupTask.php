@@ -29,6 +29,7 @@ class InitialSetupTask extends Task {
 
         //
 
+        $fs = Util::getFilesystem();
         $fs->touch($lock);
     }
 }
