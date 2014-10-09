@@ -28,12 +28,10 @@ class InitialSetupTask extends Task {
         }
 
         $fs = Util::getFilesystem();
-        $fs->copy(
-          '/vagrant/provision/main/config/config.yaml',
-          '/vagrant/provision/main/etc/config.yaml.old',
-          true,
-          'vagrant'
-        );
+        $initial_config_file = '/vagrant/provision/main/config/config.yaml';
+
+        $fs->copy($initial_config_file, '/vagrant/config/config.yaml', true, 'vagrant');
+        $fs->copy($initial_config_file, '/vagrant/provision/main/etc/config.yaml.old', true, 'vagrant');
 
         $fs->touch($lock);
     }
