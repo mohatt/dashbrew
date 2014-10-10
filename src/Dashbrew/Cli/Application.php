@@ -3,9 +3,9 @@
 namespace Dashbrew\Cli;
 
 use Dashbrew\Cli\Input\Input;
-use Dashbrew\Cli\Input\InputInterface;
 use Dashbrew\Cli\Output\Output;
-use Dashbrew\Cli\Output\OutputInterface;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Application Class.

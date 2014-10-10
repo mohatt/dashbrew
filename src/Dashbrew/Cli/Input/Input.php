@@ -9,6 +9,6 @@ use Symfony\Component\Console\Input\ArgvInput;
  *
  * @package Dashbrew\Cli\Input
  */
-class Input extends ArgvInput implements InputInterface {
+class Input extends ArgvInput {
 
 }

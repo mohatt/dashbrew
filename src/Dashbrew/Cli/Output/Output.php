@@ -9,7 +9,11 @@ use Symfony\Component\Console\Output\ConsoleOutput;
  *
  * @package Dashbrew\Cli\Output
  */
-class Output extends ConsoleOutput implements OutputInterface {
+class Output extends ConsoleOutput {
+
+    const PREFIX_INFO    = "Info";
+    const PREFIX_DEBUG   = "Debug";
+    const PREFIX_ERROR   = "Error";
 
     /**
      * {@inheritdoc}

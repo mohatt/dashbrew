@@ -2,9 +2,9 @@
 
 namespace Dashbrew\Cli\Commands;
 
-use Dashbrew\Cli\Command\Command;
-use Dashbrew\Cli\Input\InputInterface;
-use Dashbrew\Cli\Output\OutputInterface;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 use Dashbrew\Cli\Task\Runner as TaskRunner;
 use Dashbrew\Cli\Util\Util;
 use Dashbrew\Cli\Tasks\InitialSetupTask;
