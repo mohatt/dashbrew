@@ -3,7 +3,7 @@
 namespace Dashbrew\Cli\Util;
 
 use Symfony\Component\Process\Process;
-use Dashbrew\Cli\Output\OutputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Util Class.
