@@ -36,10 +36,15 @@ class Config {
 
     /**
      * @param bool $mergeOld
+     * @throws \Exception
      */
     public static function init($mergeOld = true) {
 
         $yaml = Util::getYamlParser();
+
+        if(!file_exists(self::CONFIG_FILE)){
+            throw new \Exception("Unable to find config.yaml file, please ensure that it is located at '" . self::CONFIG_FILE . "'");
+        }
 
         self::$config    = $yaml->parse(file_get_contents(self::CONFIG_FILE));
         self::$configOld = [];
