@@ -42,16 +42,29 @@ class Config {
 
         $yaml = Util::getYamlParser();
 
-        if(!file_exists(self::CONFIG_FILE)){
-            throw new \Exception("Unable to find config.yaml file, please ensure that it is located at '" . self::CONFIG_FILE . "'");
+        // Set default config values
+        $defaults = [
+            'os::packages'      => [],
+            'php::builds'       => [],
+            'apache::modules'   => [],
+            'npm::packages'     => [],
+            'debug'             => false,
+        ];
+
+        self::$config = $defaults;
+        if(file_exists(self::CONFIG_FILE)){
+            $configYaml = $yaml->parse(file_get_contents(self::CONFIG_FILE));
+            self::$config = array_merge(self::$config, $configYaml);
         }
 
-        self::$config    = $yaml->parse(file_get_contents(self::CONFIG_FILE));
-        self::$configOld = [];
+        self::$configOld = $defaults;
+        if(file_exists(self::CONFIG_FILE_OLD)){
+            $configOldYaml = $yaml->parse(file_get_contents(self::CONFIG_FILE_OLD));
+            self::$configOld = array_merge(self::$configOld, $configOldYaml);
+        }
 
-        if($mergeOld && file_exists(self::CONFIG_FILE_OLD)){
-            self::$configOld = $yaml->parse(file_get_contents(self::CONFIG_FILE_OLD));
-            self::$config    = self::mergeOldConfig();
+        if($mergeOld){
+            self::mergeOldConfig();
         }
     }
 
@@ -83,10 +96,6 @@ class Config {
         }
 
         if($key !== null){
-            if(!isset(self::$configOld[$key])){
-                return null;
-            }
-
             return self::$configOld[$key];
         }
 
@@ -104,10 +113,6 @@ class Config {
         }
 
         if(isset($key)){
-            if(!isset(self::$configOld[$key])){
-                return true;
-            }
-
             return self::$config[$key] !== self::$configOld[$key];
         }
 
@@ -119,7 +124,13 @@ class Config {
      */
     public static function writeOld() {
 
-        return Util::getFilesystem()->copy(self::CONFIG_FILE, self::CONFIG_FILE_OLD, true, 'vagrant');
+        $fs = Util::getFilesystem();
+        if(!file_exists(self::CONFIG_FILE)){
+            $fs->remove(self::CONFIG_FILE_OLD);
+            return;
+        }
+
+        $fs->copy(self::CONFIG_FILE, self::CONFIG_FILE_OLD, true, 'vagrant');
     }
 
     /**
@@ -127,42 +138,43 @@ class Config {
      */
     protected static function mergeOldConfig() {
 
-        $config = self::$config;
+        if(self::$config === self::$configOld){
+            return;
+        }
+
         foreach(self::$configOld as $mkey => $mvalue){
             if(!is_array($mvalue)){
                 continue;
             }
 
             foreach($mvalue as $key => $value){
-                if(isset($config[$mkey][$key])){
+                if(isset(self::$config[$mkey][$key])){
                     continue;
                 }
 
                 switch($mkey){
                     case 'os::packages':
                         if($value){
-                            $config[$mkey][$key] = false;
+                            self::$config[$mkey][$key] = false;
                         }
                         break;
                     case 'php::builds':
                         if(!isset($value['installed']) || !$value['installed']){
-                            $config[$mkey][$key]['installed'] = false;
+                            self::$config[$mkey][$key]['installed'] = false;
                         }
                         break;
                     case 'apache::modules':
                         if($value){
-                            $config[$mkey][$key] = false;
+                            self::$config[$mkey][$key] = false;
                         }
                         break;
                     case 'npm::packages':
                         if($value){
-                            $config[$mkey][$key] = false;
+                            self::$config[$mkey][$key] = false;
                         }
                         break;
                 }
             }
         }
-
-        return $config;
     }
 }
