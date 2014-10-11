@@ -27,7 +27,8 @@ class InitialSetupTask extends Task {
             return;
         }
 
-        //
+        $this->output->writeInfo("Running initial apt-get update");
+        Util::process($this->output, "apt-get -y update", ['timeout' => null]);
 
         $fs = Util::getFilesystem();
         $fs->touch($lock);
