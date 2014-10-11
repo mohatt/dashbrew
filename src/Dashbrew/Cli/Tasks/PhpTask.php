@@ -26,6 +26,10 @@ class PhpTask extends Task {
         }
 
         $phps = Config::get('php::builds');
+        if(count($phps) == 0){
+            return;
+        }
+
         $phpsOld = Config::getOld('php::builds');
         $installedPhps = Util::getInstalledPhps();
         $default_php = null;
