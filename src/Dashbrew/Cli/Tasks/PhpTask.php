@@ -72,7 +72,7 @@ class PhpTask extends Task {
             }
 
             $this->output->writeInfo("Removing php");
-            $proc = $this->runScript('php.remove', null, $meta['_version']);
+            $proc = $this->runScript('php.remove', $meta['_version']);
             if($proc->isSuccessful()){
                 $this->output->writeInfo("Successfully removed php");
             }
@@ -94,7 +94,7 @@ class PhpTask extends Task {
 
         $this->output->writeInfo("Building php from source");
         $this->output->writeInfo("This may take a while depending on your cpu(s)...");
-        $proc = $this->runScript('php.install', null, $meta['_version'], $meta['variants']);
+        $proc = $this->runScript('php.install', $meta['_version'], $meta['variants']);
         if($proc->isSuccessful()){
             $this->output->writeInfo("Successfully built php");
         }
@@ -139,7 +139,7 @@ class PhpTask extends Task {
             $ext_installed = file_exists($ini) || file_exists($ini_disabled);
             if(!$ext_installed || (isset($meta['_old']['extensions'][$extname]['version']) && $meta['_old']['extensions'][$extname]['version'] !== $extmeta['version'])){
                 $this->output->writeInfo("Installing $extname extension");
-                $proc = $this->runScript('ext.install', null, $meta['_version'], $extname, $extmeta['version']);
+                $proc = $this->runScript('ext.install', $meta['_version'], $extname, $extmeta['version']);
                 if($proc->isSuccessful()){
                     $this->output->writeInfo("Successfully installed $extname extension");
                 }
@@ -152,7 +152,7 @@ class PhpTask extends Task {
             $ext_enabled = file_exists($ini);
             if($extmeta['enabled'] && !$ext_enabled){
                 $this->output->writeInfo("Enabling $extname extension");
-                $proc = $this->runScript('ext.enable', null, $meta['_version'], $extname);
+                $proc = $this->runScript('ext.enable', $meta['_version'], $extname);
                 if($proc->isSuccessful()){
                     $this->output->writeInfo("Successfully enabled $extname extension");
                 }
@@ -163,7 +163,7 @@ class PhpTask extends Task {
 
             if (!$extmeta['enabled'] && $ext_enabled){
                 $this->output->writeInfo("Disabling $extname extension");
-                $proc = $this->runScript('ext.disable', null, $meta['_version'], $extname);
+                $proc = $this->runScript('ext.disable', $meta['_version'], $extname);
                 if($proc->isSuccessful()){
                     $this->output->writeInfo("Successfully disabled $extname extension");
                 }
@@ -272,7 +272,7 @@ class PhpTask extends Task {
             return;
         }
 
-        $proc = $this->runScript('php.switch', null, $version);
+        $proc = $this->runScript('php.switch', $version);
         if(!$proc->isSuccessful()){
             $this->output->writeError("Unable to switch to php $version");
         }
@@ -293,17 +293,12 @@ class PhpTask extends Task {
         }
 
         $script = array_shift($args);
-        $force_stdout = null;
-        if($args_size > 1){
-            $force_stdout = array_shift($args);
-        }
-
         $cmd = "/vagrant/provision/main/scripts/phpbrew/$script.sh";
         if(count($args) > 0){
             $cmd .= " " . implode(" ", $args);
         }
 
-        $proc = Util::Process("sudo -u vagrant bash $cmd", $this->output, false, $force_stdout, null);
+        $proc = Util::Process($this->output, "sudo -u vagrant bash $cmd", ['timeout' => null]);
 
         return $proc;
     }

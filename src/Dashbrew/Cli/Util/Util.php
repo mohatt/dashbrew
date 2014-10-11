@@ -146,43 +146,65 @@ class Util {
     /**
      * @param string $command
      * @param OutputInterface $output
-     * @param bool $disable_stderr
-     * @param null|bool $force_stdout can be set to `true` to enable stdout, `false` to
-     *  disable stdout or `null` to send stdout according to current verbosity level.
-     * @param int $timeout
-     * @param null $input
-     * @param array $env
-     * @param null $cwd
+     * @param array $options Process options, includes:
+     *  bool logfile
+     *  bool stderr
+     *  bool stdout
+     *  int timeout
+     *  string input
+     *  array env
+     *  string cwd
      * @return Process
      */
-    public static function process($command, OutputInterface $output, $disable_stderr = false, $force_stdout = null, $timeout = 60, $input = null, array $env = null, $cwd = null) {
+    public static function process(OutputInterface $output, $command, array $options = []) {
+
+        $options = array_merge([
+          'logfile' => null,
+          'stderr'  => true,
+          'stdout'  => $output->isDebug(),
+          'timeout' => 60,
+          'input'   => null,
+          'env'     => null,
+          'cwd'     => null
+        ], $options);
+
+        if(!empty($options['logfile'])){
+            $output->writeInfo('Logg');
+            $log = '/vagrant/provision/main/log/process-' . $options['logfile'];
+            $output->startLogger($log);
+        }
 
         $output->writeDebug(str_repeat('-', 55));
         $output->writeDebug("Executing command: $command");
         $output->writeDebug(str_repeat('-', 55));
 
-        $process = new Process($command, null, $env, $input, $timeout);
-        $process->run(function ($type, $buffer) use($output, $disable_stderr, $force_stdout) {
+        $process = new Process($command, $options['cwd'], $options['env'], $options['input'], $options['timeout']);
+        $process->run(function ($type, $buffer) use($output, $options) {
             if($type === Process::ERR){
-                if(true !== $disable_stderr){
+                if($options['stderr']){
                     $output->writeStderr($buffer);
                 }
 
                 return;
             }
 
-            $buffer = trim($buffer, "\n");
-            if(empty($buffer) || false === $force_stdout){
+            if(!$options['stdout']){
                 return;
             }
 
-            if($output->isDebug() || true === $force_stdout){
-                $output->writeStdout($buffer);
+            $buffer = trim($buffer, "\n");
+            if(empty($buffer)){
                 return;
             }
+
+            $output->writeStdout($buffer);
         });
 
         $output->writeDebug(str_repeat('-', 55));
+
+        if(!empty($options['logfile'])){
+            $output->endLogger($log);
+        }
 
         return $process;
     }

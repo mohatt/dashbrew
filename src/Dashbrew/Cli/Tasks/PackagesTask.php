@@ -45,7 +45,7 @@ class PackagesTask extends Task {
         $packages_config = Config::get('os::packages');
         foreach($packages_config as $package => $installed) {
             $is_installed = false;
-            $proc = Util::process('dpkg-query -W -f=\'${Status}\' ' . $package, $this->output, true);
+            $proc = Util::process($this->output, 'dpkg-query -W -f=\'${Status}\' ' . $package, ['stderr' => false]);
             if($proc->isSuccessful()){
                 $is_installed = (false !== stripos($proc->getOutput(), 'install ok installed'));
             }
@@ -64,15 +64,14 @@ class PackagesTask extends Task {
 
         if(count($packages['install']) > 0){
             $this->output->writeInfo("Running apt-get update");
-            Util::process("apt-get -y update", $this->output, false, null, null);
+            Util::process($this->output, "apt-get -y update", ['timeout' => null]);
         }
 
         foreach($packages['remove'] as $package){
             $this->output->writeInfo("Uninstalling OS package '$package'");
 
-            $proc_remove = Util::process("apt-get -y remove $package", $this->output);
-            $proc_autoremove = Util::process("apt-get -y autoremove", $this->output);
-            if(!$proc_remove->isSuccessful() || !$proc_autoremove->isSuccessful()){
+            $proc = Util::process($this->output, "apt-get -y remove $package");
+            if(!$proc->isSuccessful()){
                 $this->output->writeError("Error occured while uninstalling OS package '$package'");
                 continue;
             }
@@ -80,10 +79,14 @@ class PackagesTask extends Task {
             $this->output->writeInfo("Successfully uninstalled OS package '$package'");
         }
 
+        if(count($packages['remove']) > 0){
+            Util::process($this->output, "apt-get -y autoremove");
+        }
+
         foreach($packages['install'] as $package){
             $this->output->writeInfo("Installing OS package '$package'");
 
-            $proc = Util::process("apt-get -y install $package", $this->output, false, null, null);
+            $proc = Util::process($this->output, "apt-get -y install $package", ['timeout' => null]);
             if(!$proc->isSuccessful()){
                 $this->output->writeError("Error occured while installing OS package '$package'");
                 continue;
@@ -108,7 +111,7 @@ class PackagesTask extends Task {
         $modules_config = Config::get('apache::modules');
         foreach($modules_config as $module => $installed) {
             $is_installed = false;
-            $proc = Util::process("a2query -m $module", $this->output, true);
+            $proc = Util::process($this->output, "a2query -m $module", ['stderr' => false]);
             if($proc->isSuccessful()){
                 $is_installed = (false !== stripos($proc->getOutput(), "$module (enabled"));
             }
@@ -131,7 +134,7 @@ class PackagesTask extends Task {
 
             $this->output->writeInfo("Disabling apache modules '$modules_disable_msg'");
 
-            $proc = Util::process("a2dismod $modules_disable", $this->output);
+            $proc = Util::process($this->output, "a2dismod $modules_disable");
             if(!$proc->isSuccessful()){
                 $this->output->writeError("Error occured while disabling apache modules '$modules_disable_msg'");
             }
@@ -146,7 +149,7 @@ class PackagesTask extends Task {
 
             $this->output->writeInfo("Enabling apache modules '$modules_enable_msg'");
 
-            $proc = Util::process("a2enmod $modules_enable", $this->output);
+            $proc = Util::process($this->output, "a2enmod $modules_enable");
             if(!$proc->isSuccessful()){
                 $this->output->writeError("Error occured while enabling apache modules '$modules_enable_msg'");
             }
@@ -171,7 +174,7 @@ class PackagesTask extends Task {
         $packages_config = Config::get('npm::packages');
         foreach($packages_config as $package => $installed) {
             $is_installed = false;
-            $proc = Util::process("npm -j ls -g $package", $this->output, true);
+            $proc = Util::process($this->output, "npm -j ls -g $package", ['stderr' => false]);
             if($proc->isSuccessful()){
                 $is_installed = (false !== stripos($proc->getOutput(), '"' . $package . '": {'));
             }
@@ -191,7 +194,7 @@ class PackagesTask extends Task {
         foreach($packages['remove'] as $package){
             $this->output->writeInfo("Uninstalling npm package '$package'");
 
-            $proc = Util::process("npm uninstall -g $package", $this->output);
+            $proc = Util::process($this->output, "npm uninstall -g $package");
             if(!$proc->isSuccessful()){
                 $this->output->writeError("Error occured uninstalling npm package '$package'");
                 continue;
@@ -203,7 +206,7 @@ class PackagesTask extends Task {
         foreach($packages['install'] as $package){
             $this->output->writeInfo("Installing npm package '$package'");
 
-            $proc = Util::process("npm install -g $package", $this->output, false, null, null);
+            $proc = Util::process($this->output, "npm install -g $package", ['timeout' => null]);
             if(!$proc->isSuccessful()){
                 $this->output->writeError("Error occured while installing npm package '$package'");
                 continue;
