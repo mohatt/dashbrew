@@ -26,7 +26,7 @@ class PhpTask extends Task {
         }
 
         $phps = Config::get('php::builds');
-        if(count($phps) == 0){
+        if(empty($phps)){
             return;
         }
 

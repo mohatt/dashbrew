@@ -25,6 +25,19 @@ class Config {
     const CONFIG_FILE_OLD   = '/vagrant/provision/main/etc/config.yaml.old';
 
     /**
+     * Default config values
+     *
+     * @var array
+     */
+    protected static $defaults = [
+      'os::packages'      => [],
+      'php::builds'       => [],
+      'apache::modules'   => [],
+      'npm::packages'     => [],
+      'debug'             => false,
+    ];
+
+    /**
      * @var array
      */
     protected static $config;
@@ -42,22 +55,13 @@ class Config {
 
         $yaml = Util::getYamlParser();
 
-        // Set default config values
-        $defaults = [
-            'os::packages'      => [],
-            'php::builds'       => [],
-            'apache::modules'   => [],
-            'npm::packages'     => [],
-            'debug'             => false,
-        ];
-
-        self::$config = $defaults;
+        self::$config = self::$defaults;
         if(file_exists(self::CONFIG_FILE)){
             $configYaml = $yaml->parse(file_get_contents(self::CONFIG_FILE));
             self::$config = array_merge(self::$config, $configYaml);
         }
 
-        self::$configOld = $defaults;
+        self::$configOld = self::$defaults;
         if(file_exists(self::CONFIG_FILE_OLD)){
             $configOldYaml = $yaml->parse(file_get_contents(self::CONFIG_FILE_OLD));
             self::$configOld = array_merge(self::$configOld, $configOldYaml);
@@ -66,6 +70,8 @@ class Config {
         if($mergeOld){
             self::mergeOldConfig();
         }
+
+        //@todo add a method to validate user config
     }
 
     /**

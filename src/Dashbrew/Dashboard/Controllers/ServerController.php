@@ -86,6 +86,10 @@ class ServerController extends Controller {
     protected function __getInstalledPhps(){
 
         $phps = Config::get('php::builds');
+        if(empty($phps)){
+            return [];
+        }
+
         $phpsInstalled = Util::getInstalledPhps();
         foreach($phps as $version => $meta){
             if(!in_array("php-{$version}", $phpsInstalled)){

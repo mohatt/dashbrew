@@ -35,14 +35,18 @@ class PackagesTask extends Task {
      */
     protected function manageOsPackages(){
 
+        $packages_config = Config::get('os::packages');
+        if(empty($packages_config)){
+            return;
+        }
+
         $this->output->writeInfo("Checking system packages");
 
         $packages = [
-            'install' => [],
-            'remove'  => []
+          'install' => [],
+          'remove'  => []
         ];
 
-        $packages_config = Config::get('os::packages');
         foreach($packages_config as $package => $installed) {
             $is_installed = false;
             $proc = Util::process($this->output, 'dpkg-query -W -f=\'${Status}\' ' . $package, ['stderr' => false]);
@@ -101,6 +105,11 @@ class PackagesTask extends Task {
      */
     protected function manageApacheModules(){
 
+        $modules_config = Config::get('apache::modules');
+        if(empty($modules_config)){
+            return;
+        }
+
         $this->output->writeInfo("Checking apache modules");
 
         $modules = [
@@ -108,7 +117,6 @@ class PackagesTask extends Task {
             'disable'  => []
         ];
 
-        $modules_config = Config::get('apache::modules');
         foreach($modules_config as $module => $installed) {
             $is_installed = false;
             $proc = Util::process($this->output, "a2query -m $module", ['stderr' => false]);
@@ -164,6 +172,11 @@ class PackagesTask extends Task {
      */
     protected function manageNpmPackages(){
 
+        $packages_config = Config::get('npm::packages');
+        if(empty($packages_config)){
+            return;
+        }
+
         $this->output->writeInfo("Checking nodejs modules");
 
         $packages = [
@@ -171,7 +184,6 @@ class PackagesTask extends Task {
             'remove'  => []
         ];
 
-        $packages_config = Config::get('npm::packages');
         foreach($packages_config as $package => $installed) {
             $is_installed = false;
             $proc = Util::process($this->output, "npm -j ls -g $package", ['stderr' => false]);
