@@ -159,20 +159,14 @@ class Util {
     public static function process(OutputInterface $output, $command, array $options = []) {
 
         $options = array_merge([
-          'logfile' => null,
           'stderr'  => true,
           'stdout'  => $output->isDebug(),
           'timeout' => 60,
           'input'   => null,
           'env'     => null,
-          'cwd'     => null
+          'cwd'     => null,
+          'logfile' => null, //@todo implement process logger
         ], $options);
-
-        if(!empty($options['logfile'])){
-            $output->writeInfo('Logg');
-            $log = '/vagrant/provision/main/log/process-' . $options['logfile'];
-            $output->startLogger($log);
-        }
 
         $output->writeDebug(str_repeat('-', 55));
         $output->writeDebug("Executing command: $command");
@@ -201,10 +195,6 @@ class Util {
         });
 
         $output->writeDebug(str_repeat('-', 55));
-
-        if(!empty($options['logfile'])){
-            $output->endLogger($log);
-        }
 
         return $process;
     }
