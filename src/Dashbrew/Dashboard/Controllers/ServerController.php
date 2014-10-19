@@ -45,10 +45,10 @@ class ServerController extends Controller {
                 $this->set('phps', $this->__getInstalledPhps());
                 break;
             case 'output':
-                $version = $this->request->post('version');
+                $build = $this->request->post('version');
                 $code = $this->request->post('code');
-                if(!empty($version) && !empty($code)){
-                    $output = Util::runPhpCode($code, $version);
+                if(!empty($build) && !empty($code)){
+                    $output = Util::runPhpCode($code, $build);
                     $output = htmlspecialchars(implode("\n", $output));
                 }
                 else {
@@ -91,9 +91,9 @@ class ServerController extends Controller {
         }
 
         $phpsInstalled = Util::getInstalledPhps();
-        foreach($phps as $version => $meta){
-            if(!in_array("php-{$version}", $phpsInstalled)){
-                unset($phps[$version]);
+        foreach($phps as $build => $meta){
+            if(!in_array($build, $phpsInstalled)){
+                unset($phps[$build]);
                 continue;
             }
 
@@ -105,10 +105,10 @@ class ServerController extends Controller {
                 }
             }
 
-            $pidfile = '/opt/phpbrew/php/php-' . $version . '/var/run/php-fpm.pid';
-            $phps[$version]['running'] = false;
+            $pidfile = '/opt/phpbrew/php/' . $build . '/var/run/php-fpm.pid';
+            $phps[$build]['running'] = false;
             if(file_exists($pidfile) && trim(file_get_contents($pidfile)) != ""){
-                $phps[$version]['running'] = true;
+                $phps[$build]['running'] = true;
             }
         }
 

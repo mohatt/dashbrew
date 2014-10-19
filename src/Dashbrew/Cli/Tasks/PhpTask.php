@@ -34,25 +34,25 @@ class PhpTask extends Task {
         $installedPhps = Util::getInstalledPhps();
         $default_php = null;
 
-        foreach($phps as $version => $meta) {
+        foreach($phps as $build => $meta) {
 
-            $meta['_version'] = $version;
-            $meta['_path'] = "/opt/phpbrew/php/php-$version";
-            $meta['_is_installed'] = in_array('php-' . $version, $installedPhps);
-            $meta['_old'] = isset($phpsOld[$version]) ? $phpsOld[$version] : [];
+            $meta['_build'] = $build;
+            $meta['_path'] = "/opt/phpbrew/php/$build";
+            $meta['installed'] = (!isset($meta['installed']) || $meta['installed']);
+            $meta['_is_installed'] = in_array($build, $installedPhps);
+            $meta['_old'] = isset($phpsOld[$build]) ? $phpsOld[$build] : [];
 
-            try {
-                $this->managePhp($meta);
-            } catch(\Exception $e){
-                $this->output->writeError($e->getMessage());
+            // ignore if php to be removed and is not installed
+            if(!$meta['installed'] && !$meta['_is_installed']){
                 continue;
             }
 
+            $this->managePhp($meta);
             $this->manageExtensions($meta);
             $this->manageFpm($meta);
 
             if(!empty($meta['default'])){
-                $default_php = $version;
+                $default_php = $build;
             }
         }
 
@@ -68,15 +68,11 @@ class PhpTask extends Task {
     protected function managePhp($meta) {
 
         $fs = Util::getFilesystem();
-        $this->output->writeInfo("Checking php $meta[_version]");
+        $this->output->writeInfo("Checking php $meta[_build]");
 
-        if(isset($meta['installed']) && !$meta['installed']){
-            if(!$meta['_is_installed']){
-                return;
-            }
-
+        if(!$meta['installed']){
             $this->output->writeInfo("Removing php");
-            $proc = $this->runScript('php.remove', $meta['_version']);
+            $proc = $this->runScript('php.remove', $meta['_build']);
             if($proc->isSuccessful()){
                 $this->output->writeInfo("Successfully removed php");
             }
@@ -88,19 +84,40 @@ class PhpTask extends Task {
             return;
         }
 
-        if(!isset($meta['variants'])){
-            throw new \Exception("Build variants for php $meta[_version] are not defined in config.yaml file");
+        if(!isset($meta['version'])){
+            $meta['version'] = $meta['_build'];
         }
 
-        if($meta['_is_installed'] && isset($meta['_old']['variants']) && $meta['_old']['variants'] === $meta['variants']){
+        if(!empty($meta['_old']) && !isset($meta['_old']['version'])){
+            $meta['_old']['version'] = $meta['_build'];
+        }
+
+        if(!preg_match('/^[0-9][0-9\.]*[0-9]$/', $meta['version'])){
+            throw new \Exception("Invalid php version $meta[version]");
+        }
+
+        if(version_compare($meta['version'], '5.3.0') < 0){
+            throw new \Exception("Building php versions older than 5.3.0 is not supported");
+        }
+
+        if(empty($meta['variants'])){
+            throw new \Exception("Build variants for php $meta[_build] are not defined in config.yaml file");
+        }
+
+        if($meta['_is_installed'] && !empty($meta['_old']) && $meta['_old']['version'] == $meta['version'] && $meta['_old']['variants'] == $meta['variants']){
             return;
         }
 
         $this->output->writeInfo("Building php from source");
         $this->output->writeInfo("This may take a while depending on your cpu(s)...");
-        $proc = $this->runScript('php.install', $meta['_version'], $meta['variants']);
+        $proc = $this->runScript('php.install', $meta['_build'], $meta['version'], $meta['variants']);
         if($proc->isSuccessful()){
             $this->output->writeInfo("Successfully built php");
+            // Get a copy of the log file
+            $log_from = "/opt/phpbrew/build/php-$meta[version]/build.log";
+            $log_to = "/vagrant/provision/main/logs/phpbuild-$meta[_build].log";
+            $fs->copy($log_from, $log_to, true);
+            $this->output->writeInfo("Saved build log file to $log_to");
         }
         else {
             $fs->remove($meta['_path']);
@@ -123,7 +140,7 @@ class PhpTask extends Task {
         $this->output->writeInfo("Checking extensions");
 
         // skip if php is to be removed
-        if(isset($meta['installed']) && !$meta['installed']){
+        if(!$meta['installed']){
             return;
         }
 
@@ -143,7 +160,7 @@ class PhpTask extends Task {
             $ext_installed = file_exists($ini) || file_exists($ini_disabled);
             if(!$ext_installed || (isset($meta['_old']['extensions'][$extname]['version']) && $meta['_old']['extensions'][$extname]['version'] !== $extmeta['version'])){
                 $this->output->writeInfo("Installing $extname extension");
-                $proc = $this->runScript('ext.install', $meta['_version'], $extname, $extmeta['version']);
+                $proc = $this->runScript('ext.install', $meta['_build'], $extname, $extmeta['version']);
                 if($proc->isSuccessful()){
                     $this->output->writeInfo("Successfully installed $extname extension");
                 }
@@ -156,7 +173,7 @@ class PhpTask extends Task {
             $ext_enabled = file_exists($ini);
             if($extmeta['enabled'] && !$ext_enabled){
                 $this->output->writeInfo("Enabling $extname extension");
-                $proc = $this->runScript('ext.enable', $meta['_version'], $extname);
+                $proc = $this->runScript('ext.enable', $meta['_build'], $extname);
                 if($proc->isSuccessful()){
                     $this->output->writeInfo("Successfully enabled $extname extension");
                 }
@@ -167,7 +184,7 @@ class PhpTask extends Task {
 
             if (!$extmeta['enabled'] && $ext_enabled){
                 $this->output->writeInfo("Disabling $extname extension");
-                $proc = $this->runScript('ext.disable', $meta['_version'], $extname);
+                $proc = $this->runScript('ext.disable', $meta['_build'], $extname);
                 if($proc->isSuccessful()){
                     $this->output->writeInfo("Successfully disabled $extname extension");
                 }
@@ -193,10 +210,10 @@ class PhpTask extends Task {
         $this->output->writeInfo("Checking fpm");
 
         $fs = Util::getFilesystem();
-        $monit_conf_file = "/etc/monit/conf.d/php-$meta[_version]-fpm.conf";
-        $apache_conf_file = "/etc/apache2/php/php-$meta[_version]-fpm.conf";
+        $monit_conf_file = "/etc/monit/conf.d/php-$meta[_build]-fpm.conf";
+        $apache_conf_file = "/etc/apache2/php/php-$meta[_build]-fpm.conf";
 
-        if(empty($meta['fpm']['port']) || (isset($meta['installed']) && !$meta['installed'])){
+        if(empty($meta['fpm']['port']) || !$meta['installed']){
             if(file_exists($monit_conf_file)){
                 $this->output->writeInfo("Removing monit php-fpm config file '$monit_conf_file'");
                 $fs->remove($monit_conf_file);
@@ -222,7 +239,7 @@ class PhpTask extends Task {
         }
 
         $monit_conf_template = Util::renderTemplate('monit/conf.d/php-fpm.conf.php', [
-            'version' => $meta['_version'],
+            'build'   => $meta['_build'],
             'port'    => $meta['fpm']['port'],
         ]);
 
@@ -232,7 +249,7 @@ class PhpTask extends Task {
         }
 
         $apache_conf_template = Util::renderTemplate('apache/php/php-fpm.conf.php', [
-            'version' => $meta['_version'],
+            'build'   => $meta['_build'],
             'port'    => $meta['fpm']['port'],
         ]);
 
@@ -245,10 +262,10 @@ class PhpTask extends Task {
     /**
      * Sets default php version
      *
-     * @param $version
+     * @param $build
      * @throws \Exception
      */
-    protected function setDefaultPhp($version) {
+    protected function setDefaultPhp($build) {
 
         $proc = $this->runScript('php.current');
         if(!$proc->isSuccessful()){
@@ -258,16 +275,16 @@ class PhpTask extends Task {
 
         $current = null;
         $output = $proc->getOutput();
-        if(preg_match('/php\-([0-9\.]*)/', $output, $matches)){
+        if(preg_match('/using\s(.*)/i', $output, $matches)){
             $current = $matches[1];
         }
 
-        if($current === $version){
+        if($current === $build){
             return;
         }
 
         // Use system php
-        if(null === $version){
+        if(null === $build){
             $proc = $this->runScript('php.switchoff');
             if(!$proc->isSuccessful()){
                 $this->output->writeError("Unable to switch off phpbrew");
@@ -276,9 +293,9 @@ class PhpTask extends Task {
             return;
         }
 
-        $proc = $this->runScript('php.switch', $version);
+        $proc = $this->runScript('php.switch', $build);
         if(!$proc->isSuccessful()){
-            $this->output->writeError("Unable to switch to php $version");
+            $this->output->writeError("Unable to switch to php $build");
         }
     }
 

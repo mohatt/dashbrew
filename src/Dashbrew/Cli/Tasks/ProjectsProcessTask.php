@@ -212,42 +212,42 @@ class ProjectsProcessTask extends Task {
 
         $phps_config = Config::get('php::builds');
         // set default php version if not set
-        if(null === $default_php_version){
-            foreach($phps_config as $version => $meta){
+        if(!isset($default_php_version)){
+            foreach($phps_config as $build => $meta){
                 if(!empty($meta['default'])){
-                    $default_php_version = $version;
+                    $default_php_version = $build;
                 }
             }
 
-            if(null === $default_php_version){
+            if(!isset($default_php_version)){
                 $default_php_version = 0;
             }
         }
 
-        $php_version = $project['php'];
-        if($php_version == 'default' && 0 === $default_php_version){
-            $this->output->writeError("Unable to use default php version for project '$id', no default php version found");
+        $php_build = $project['php'];
+        if($php_build == 'default' && 0 === $default_php_version){
+            $this->output->writeError("Unable to use default php build for project '$id' because no default php build found");
             return $vhost;
         }
 
-        if($php_version == 'default'){
-            $php_version = $default_php_version;
+        if($php_build == 'default'){
+            $php_build = $default_php_version;
         }
 
         $phps_installed = Util::getInstalledPhps();
-        if(!in_array('php-' . $php_version, $phps_installed) || !isset($phps_config[$php_version])){
-            $this->output->writeError("Unable to use php version '$php_version' for project '$id', php version isn't installed");
+        if(!in_array($php_build, $phps_installed) || !isset($phps_config[$php_build])){
+            $this->output->writeError("Unable to use php '$php_build' for project '$id', php build isn't installed");
             return $vhost;
         }
 
-        if(empty($phps_config[$php_version]['fpm']['port'])){
-            $this->output->writeError("Unable to use php version '$php_version' for project '$id', php fpm port isn't configured");
+        if(empty($phps_config[$php_build]['fpm']['port'])){
+            $this->output->writeError("Unable to use php '$php_build' for project '$id', php fpm port isn't configured");
             return $vhost;
         }
 
-        $php_version_fpm_conf = '/etc/apache2/php/php-' . $php_version . '-fpm.conf';
+        $php_version_fpm_conf = '/etc/apache2/php/php-' . $php_build . '-fpm.conf';
         if(!file_exists($php_version_fpm_conf)){
-            $this->output->writeError("Unable to use php version '$php_version' for project '$id', apache php-fpm config file '$php_version_fpm_conf' doesn't exist");
+            $this->output->writeError("Unable to use php '$php_build' for project '$id', apache php-fpm config file '$php_version_fpm_conf' doesn't exist");
             return $vhost;
         }
 

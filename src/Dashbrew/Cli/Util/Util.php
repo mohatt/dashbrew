@@ -73,23 +73,23 @@ class Util {
         return $output[0];
     }
 
-    public static function runPhpCode($code, $version = 'system'){
+    public static function runPhpCode($code, $build = 'system'){
 
-        if($version == 'system'){
+        if($build == 'system'){
             $fpmPort = '9001';
         }
         else {
             $phps = Config::get('php::builds');
             $phpsInstalled = Util::getInstalledPhps();
-            if(empty($phps[$version]) || !in_array("php-{$version}", $phpsInstalled)){
-                throw new \Exception("Unable to find php $version");
+            if(empty($phps[$build]) || !in_array($build, $phpsInstalled)){
+                throw new \Exception("Unable to find php $build");
             }
 
-            if(empty($phps[$version]['fpm']['port'])){
-                throw new \Exception("Unable to find fpm port for php $version");
+            if(empty($phps[$build]['fpm']['port'])){
+                throw new \Exception("Unable to find fpm port for php $build");
             }
 
-            $fpmPort = $phps[$version]['fpm']['port'];
+            $fpmPort = $phps[$build]['fpm']['port'];
         }
 
         $filename = uniqid('coderunner_', true) . '.php';

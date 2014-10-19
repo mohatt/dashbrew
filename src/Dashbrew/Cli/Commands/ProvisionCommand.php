@@ -30,8 +30,12 @@ class ProvisionCommand extends Command {
         $sw = Util::getStopwatch();
         $sw->start('provision');
 
-        // Run provisioning tasks
-        $this->runTasks($input, $output);
+        try {
+            // Run provisioning tasks
+            $this->runTasks($input, $output);
+        } catch(\Exception $e){
+            $output->writeError($e->getMessage());
+        }
 
         $duration = round($sw->stop('provision')->getDuration() / 1000, 2);
         $duration_unit = 's';
