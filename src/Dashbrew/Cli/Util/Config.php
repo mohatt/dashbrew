@@ -165,7 +165,7 @@ class Config {
                         }
                         break;
                     case 'php::builds':
-                        if(!isset($value['installed']) || !$value['installed']){
+                        if(!isset($value['installed']) || $value['installed']){
                             self::$config[$mkey][$key]['installed'] = false;
                         }
                         break;
