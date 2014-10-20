@@ -217,6 +217,12 @@ class PhpTask extends Task {
         $apache_conf_file = "/etc/apache2/php/php-$meta[_build]-fpm.conf";
 
         if(empty($meta['fpm']['port']) || !$meta['installed']){
+            $this->output->writeInfo("Stopping monit php-fpm service");
+            $proc = Util::process($this->output, "monit stop php-$meta[_build]-fpm");
+            if($proc->isSuccessful()){
+                // wait until monit stops the service
+                while(file_exists("$meta[_path]/var/run/php-fpm.pid")) usleep(500000);
+            }
 
             if(file_exists($monit_conf_file)){
                 $this->output->writeInfo("Removing monit php-fpm config file '$monit_conf_file'");
