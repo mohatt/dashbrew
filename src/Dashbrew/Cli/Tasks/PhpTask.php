@@ -74,6 +74,7 @@ class PhpTask extends Task {
 
         if(!$meta['installed']){
             $this->output->writeInfo("Removing php");
+            $this->stopFpm($meta['_build']);
             $proc = $this->runScript('php.remove', $meta['_build']);
             if($proc->isSuccessful()){
                 $this->output->writeInfo("Successfully removed php");
@@ -217,11 +218,8 @@ class PhpTask extends Task {
         $apache_conf_file = "/etc/apache2/php/php-$meta[_build]-fpm.conf";
 
         if(empty($meta['fpm']['port']) || !$meta['installed']){
-            $this->output->writeInfo("Stopping monit php-fpm service");
-            $proc = Util::process($this->output, "monit stop php-$meta[_build]-fpm");
-            if($proc->isSuccessful()){
-                // wait until monit stops the service
-                while(file_exists("$meta[_path]/var/run/php-fpm.pid")) usleep(500000);
+            if(!empty($meta['_old']['fpm']['port'])){
+                $this->stopFpm($meta['_build']);
             }
 
             if(file_exists($monit_conf_file)){
@@ -270,6 +268,22 @@ class PhpTask extends Task {
 
         if(!isset($meta['fpm']['autostart']) || $meta['fpm']['autostart']){
             ServiceManager::addService("php-$meta[_build]-fpm");
+        }
+    }
+
+    /**
+     * Stops php-fpm
+     *
+     * @param $build
+     * @throws \Exception
+     */
+    protected function stopFpm($build) {
+
+        $this->output->writeInfo("Stopping php-fpm service");
+        $proc = Util::process($this->output, "monit stop php-$build-fpm");
+        if($proc->isSuccessful()){
+            // wait until monit stops the service
+            while(file_exists("/opt/phpbrew/php/$build/var/run/php-fpm.pid")) usleep(500000);
         }
     }
 
