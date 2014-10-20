@@ -268,7 +268,9 @@ class PhpTask extends Task {
             $fs->write($apache_conf_file, $apache_conf_template, 'root');
         }
 
-        ServiceManager::addService("php-$meta[_build]-fpm");
+        if(!isset($meta['fpm']['autostart']) || $meta['fpm']['autostart']){
+            ServiceManager::addService("php-$meta[_build]-fpm");
+        }
     }
 
     /**
