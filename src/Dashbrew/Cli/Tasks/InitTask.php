@@ -7,7 +7,7 @@ use Dashbrew\Cli\Output\Output;
 use Dashbrew\Cli\Task\Task;
 use Dashbrew\Cli\Util\Util;
 use Dashbrew\Cli\Util\Config;
-use Dashbrew\Cli\Util\Registry;
+use Dashbrew\Cli\Util\SyncManager;
 use Dashbrew\Cli\Util\ServiceManager;
 
 /**
@@ -164,8 +164,13 @@ class InitTask extends Task {
             ];
         }
 
-        Registry::set('config_files', $config_files);
-        Registry::set('config_dirs', $config_dirs);
+        foreach($config_files as $config_file){
+            SyncManager::addRule(SyncManager::SYNC_FILE, $config_file);
+        }
+
+        foreach($config_dirs as $config_dir){
+            SyncManager::addRule(SyncManager::SYNC_DIR, $config_dir);
+        }
 
         $services = [
           'apache',
@@ -173,6 +178,7 @@ class InitTask extends Task {
           'php-system-fpm',
           'mailcatcher',
         ];
+
         foreach($services as $service){
             ServiceManager::addService($service);
         }

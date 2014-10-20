@@ -5,7 +5,7 @@ namespace Dashbrew\Cli\Tasks;
 use Dashbrew\Cli\Commands\ProvisionCommand;
 use Dashbrew\Cli\Task\Task;
 use Dashbrew\Cli\Util\Util;
-use Dashbrew\Cli\Util\Registry;
+use Dashbrew\Cli\Util\SyncManager;
 use Dashbrew\Cli\Util\Finder;
 
 /**
@@ -28,8 +28,8 @@ class ConfigDefaultsTask extends Task {
 
         $fs = Util::getFilesystem();
 
-        $config_files = Registry::get('config_files');
-        $config_dirs = Registry::get('config_dirs');
+        $config_files = SyncManager::getRules(SyncManager::SYNC_FILE);;
+        $config_dirs = SyncManager::getRules(SyncManager::SYNC_DIR);
         $config_sources = array_merge(
             array_column($config_files, 'source'),
             array_column($config_dirs, 'source')
@@ -74,9 +74,8 @@ class ConfigDefaultsTask extends Task {
                 continue;
             }
 
-            $fs->mkdir($target_dir, 0777, 'vagrant');
-
             $this->output->writeInfo("Writing default config dir '$target_dir'");
+            $fs->mkdir($target_dir, 0777, 'vagrant');
             $finder = new Finder;
             foreach($finder->files()->in($source_dir)->ignoreDotFiles(false)->depth('== 0') as $origin_dir_file){
                 $origin_dir_filename = $origin_dir_file->getFilename();

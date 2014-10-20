@@ -5,7 +5,7 @@ namespace Dashbrew\Cli\Tasks;
 use Dashbrew\Cli\Commands\ProvisionCommand;
 use Dashbrew\Cli\Task\Task;
 use Dashbrew\Cli\Util\Util;
-use Dashbrew\Cli\Util\Registry;
+use Dashbrew\Cli\Util\SyncManager;
 use Dashbrew\Cli\Util\Finder;
 
 /**
@@ -21,7 +21,7 @@ class ConfigSyncTask extends Task {
      * The path to the config directories sync status file, this file holds
      *  information about the contents of both host and guest directories
      */
-    const DIR_SYNC_STATUS_FILE = '/vagrant/provision/main/etc/config_dirs_status.json';
+    const SYNC_STATUS_FILE = '/vagrant/provision/main/etc/sync_status.json';
 
     /**
      * @throws \Exception
@@ -45,7 +45,7 @@ class ConfigSyncTask extends Task {
     protected function syncFiles() {
 
         $fs = Util::getFilesystem();
-        $config_files = Registry::get('config_files');
+        $config_files = SyncManager::getRules(SyncManager::SYNC_FILE);
 
         foreach ($config_files as $file){
             if(empty($file['path'])){
@@ -96,11 +96,11 @@ class ConfigSyncTask extends Task {
 
         $fs = Util::getFilesystem();
         $sync_status = [];
-        if(file_exists(self::DIR_SYNC_STATUS_FILE)){
-            $sync_status = json_decode(file_get_contents(self::DIR_SYNC_STATUS_FILE), true);
+        if(file_exists(self::SYNC_STATUS_FILE)){
+            $sync_status = json_decode(file_get_contents(self::SYNC_STATUS_FILE), true);
         }
         $sync_status_new = [];
-        $config_dirs = Registry::get('config_dirs');
+        $config_dirs = SyncManager::getRules(SyncManager::SYNC_DIR);
 
         foreach ($config_dirs as $dir){
             if(empty($dir['path'])){
@@ -202,6 +202,6 @@ class ConfigSyncTask extends Task {
 
         // Write status file
         $this->output->writeDebug("Writing config directories sync status file");
-        $fs->write(self::DIR_SYNC_STATUS_FILE, json_encode($sync_status_new), 'vagrant');
+        $fs->write(self::SYNC_STATUS_FILE, json_encode($sync_status_new), 'vagrant');
     }
 }

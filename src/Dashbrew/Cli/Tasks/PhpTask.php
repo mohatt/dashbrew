@@ -6,6 +6,7 @@ use Dashbrew\Cli\Commands\ProvisionCommand;
 use Dashbrew\Cli\Task\Task;
 use Dashbrew\Cli\Util\Util;
 use Dashbrew\Cli\Util\Config;
+use Dashbrew\Cli\Util\SyncManager;
 use Dashbrew\Cli\Util\ServiceManager;
 
 /**
@@ -81,6 +82,7 @@ class PhpTask extends Task {
                 throw new \Exception("Unable to remove php");
             }
 
+            SyncManager::removeRules($meta['_path'], true, true);
             $fs->remove($meta['_path']);
             return;
         }
@@ -215,6 +217,7 @@ class PhpTask extends Task {
         $apache_conf_file = "/etc/apache2/php/php-$meta[_build]-fpm.conf";
 
         if(empty($meta['fpm']['port']) || !$meta['installed']){
+
             if(file_exists($monit_conf_file)){
                 $this->output->writeInfo("Removing monit php-fpm config file '$monit_conf_file'");
                 $fs->remove($monit_conf_file);
