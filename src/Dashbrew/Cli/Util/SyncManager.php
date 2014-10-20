@@ -5,11 +5,14 @@ namespace Dashbrew\Cli\Util;
 class SyncManager extends Registry {
 
     private static $key = 'sync';
+    private static $index = [];
 
     const SYNC_FILE = 'file';
     const SYNC_DIR  = 'dir';
 
     public static function addRule($type, $rule) {
+
+        static $i = 0;
 
         if(!self::check(self::$key)){
             self::set(self::$key, []);
@@ -19,55 +22,61 @@ class SyncManager extends Registry {
             throw new \Exception ("Invalid sync rule supplied to SyncManager::addRule");
         }
 
-        $id = rtrim($rule['source'], " /");
-        $rules = self::get(self::$key);
-        if(isset($rules[$id])){
+        $rule['type']   = $type;
+        $rule['source'] = rtrim($rule['source'], " /");
+        $rule['path']   = rtrim($rule['path'], " /");
+
+        if(isset(self::$index[$rule['source']])){
             throw new \Exception ("Duplicate sync rule (source: $rule[source]) supplied to SyncManager::addRule");
         }
 
-        $rule['type'] = $type;
-        $rules[$id] = $rule;
+        if(isset(self::$index[$rule['path']])){
+            throw new \Exception ("Duplicate sync rule (source: $rule[path]) supplied to SyncManager::addRule");
+        }
+
+        $rules = self::get(self::$key);
+
+        $i++;
+        $rules[$i] = $rule;
+        self::$index[$rule['source']] = $i;
+        self::$index[$rule['path']] = $i;
 
         self::set(self::$key, $rules);
+
+        return $i;
     }
 
-    public static function removeRule($source, $removeSource = false, $removeTarget = false) {
+    public static function removeRule($path, $recursive = false, $removeSource = false, $removeTarget = false) {
 
         if(!self::check(self::$key)){
             return;
         }
 
-        $id = rtrim($source, " /");
+        $path = rtrim($path, " /");
+        $remove = [];
+        foreach(self::$index as $index_path => $i){
+            if($index_path == $path || ($recursive && 0 === strpos($index_path, $path, 0))){
+                $remove[] = $i;
+            }
+        }
+
         $fs = Util::getFilesystem();
         $rules = self::get(self::$key);
-        if(isset($rules[$id])){
+        foreach(array_unique($remove) as $i){
             if($removeSource){
-                $fs->remove($rules[$id]['source']);
+                $fs->remove($rules[$i]['source']);
             }
 
             if($removeTarget){
-                $fs->remove($rules[$id]['path']);
+                $fs->remove($rules[$i]['path']);
             }
 
-            unset($rules[$id]);
+            unset(self::$index[$rules[$i]['source']]);
+            unset(self::$index[$rules[$i]['path']]);
+            unset($rules[$i]);
         }
 
         self::set(self::$key, $rules);
-    }
-
-    public static function removeRules($prefix, $removeSource = false, $removeTarget = false) {
-
-        if(!self::check(self::$key)){
-            return;
-        }
-
-        $prefix = rtrim($prefix, " /");
-        $rules = self::get(self::$key);
-        foreach(array_keys($rules) as $id){
-            if(0 === strpos($id, $prefix, 0)){
-                self::removeRule($id, $removeSource, $removeTarget);
-            }
-        }
     }
 
     public static function getRules($type = null) {
@@ -82,9 +91,9 @@ class SyncManager extends Registry {
         }
 
         $filtered = [];
-        foreach($rules as $id => $rule){
+        foreach($rules as $i => $rule){
             if($rule['type'] == $type){
-                $filtered[$id] = $rule;
+                $filtered[$i] = $rule;
             }
         }
 

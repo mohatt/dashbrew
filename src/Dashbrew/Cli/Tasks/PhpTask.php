@@ -82,7 +82,7 @@ class PhpTask extends Task {
                 throw new \Exception("Unable to remove php");
             }
 
-            SyncManager::removeRules($meta['_path'], true, true);
+            SyncManager::removeRule($meta['_path'], true, true);
             $fs->remove($meta['_path']);
             return;
         }
@@ -206,7 +206,7 @@ class PhpTask extends Task {
      */
     protected function manageFpm($meta) {
 
-        if(empty($meta['fpm']['port']) && empty($meta['_old']['fpm']['port']) ){
+        if(empty($meta['fpm']['port']) && empty($meta['_old']['fpm']['port'])){
             return;
         }
 
