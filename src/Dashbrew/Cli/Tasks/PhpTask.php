@@ -6,6 +6,7 @@ use Dashbrew\Cli\Commands\ProvisionCommand;
 use Dashbrew\Cli\Task\Task;
 use Dashbrew\Cli\Util\Util;
 use Dashbrew\Cli\Util\Config;
+use Dashbrew\Cli\Util\ServiceManager;
 
 /**
  * Php Task Class
@@ -257,6 +258,8 @@ class PhpTask extends Task {
             $this->output->writeInfo("Writing apache php-fpm config file '$apache_conf_file'");
             $fs->write($apache_conf_file, $apache_conf_template, 'root');
         }
+
+        ServiceManager::addService("php-$meta[_build]-fpm");
     }
 
     /**

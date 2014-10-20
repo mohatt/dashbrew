@@ -8,7 +8,7 @@ use Dashbrew\Cli\Task\Task;
 use Dashbrew\Cli\Util\Util;
 use Dashbrew\Cli\Util\Config;
 use Dashbrew\Cli\Util\Registry;
-use Dashbrew\Cli\Util\Finder;
+use Dashbrew\Cli\Util\ServiceManager;
 
 /**
  * Init Task Class.
@@ -166,5 +166,15 @@ class InitTask extends Task {
 
         Registry::set('config_files', $config_files);
         Registry::set('config_dirs', $config_dirs);
+
+        $services = [
+          'apache',
+          'mysql',
+          'php-system-fpm',
+          'mailcatcher',
+        ];
+        foreach($services as $service){
+            ServiceManager::addService($service);
+        }
     }
 }
