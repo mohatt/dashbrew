@@ -70,10 +70,11 @@ class PhpTask extends Task {
     protected function managePhp($meta) {
 
         $fs = Util::getFilesystem();
-        $this->output->writeInfo("Checking php $meta[_build]");
 
         if(!$meta['installed']){
-            $this->output->writeInfo("Removing php");
+            $this->output->writeInfo("Removing php $meta[_build]");
+            // php fpm has to be stopped before remving php build so that
+            // the php-fpm.pid file is still exist
             $this->stopFpm($meta['_build']);
             $proc = $this->runScript('php.remove', $meta['_build']);
             if($proc->isSuccessful()){
@@ -86,6 +87,9 @@ class PhpTask extends Task {
             SyncManager::removeRule($meta['_path'], true, true);
             $fs->remove($meta['_path']);
             return;
+        }
+        else {
+            $this->output->writeInfo("Checking php $meta[_build]");
         }
 
         if(!isset($meta['version'])){
@@ -164,16 +168,12 @@ class PhpTask extends Task {
      */
     protected function manageExtensions($meta) {
 
-        if(!isset($meta['extensions'])){
+        // skip if php is to be removed or no extensions has been defined in config.yaml
+        if(empty($meta['extensions']) || !$meta['installed']){
             return;
         }
 
         $this->output->writeInfo("Checking extensions");
-
-        // skip if php is to be removed
-        if(!$meta['installed']){
-            return;
-        }
 
         foreach ($meta['extensions'] as $extname => $extmeta) {
             if(empty($extmeta['version'])){
@@ -238,17 +238,22 @@ class PhpTask extends Task {
             return;
         }
 
-        $this->output->writeInfo("Checking fpm");
+        if($meta['installed'] && !empty($meta['fpm']['port'])){
+            $this->output->writeInfo("Checking fpm");
+        }
+        else {
+            $this->output->writeInfo("Removing fpm");
+        }
 
         $fs = Util::getFilesystem();
         $monit_conf_file = "/etc/monit/conf.d/php-$meta[_build]-fpm.conf";
         $apache_conf_file = "/etc/apache2/php/php-$meta[_build]-fpm.conf";
 
-        if(empty($meta['fpm']['port']) || !$meta['installed']){
-            if(!empty($meta['_old']['fpm']['port'])){
-                $this->stopFpm($meta['_build']);
-            }
+        if($meta['installed'] && empty($meta['fpm']['port']) && !empty($meta['_old']['fpm']['port'])){
+            $this->stopFpm($meta['_build']);
+        }
 
+        if(!$meta['installed'] || empty($meta['fpm']['port'])){
             if(file_exists($monit_conf_file)){
                 $this->output->writeInfo("Removing monit php-fpm config file '$monit_conf_file'");
                 $fs->remove($monit_conf_file);
