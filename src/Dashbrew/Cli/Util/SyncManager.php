@@ -2,6 +2,9 @@
 
 namespace Dashbrew\Cli\Util;
 
+/*
+ * @todo refactor this
+ */
 class SyncManager extends Registry {
 
     private static $key = 'sync';

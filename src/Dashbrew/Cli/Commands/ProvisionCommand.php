@@ -56,12 +56,13 @@ class ProvisionCommand extends Command {
         $runner->addTask(new InitialSetupTask);
         $runner->addTask(new InitTask);
         $runner->addTask(new ConfigDefaultsTask);
-        $runner->addTask(new PackagesTask);
         $runner->addTask(new ConfigSyncTask);
+        $runner->addTask(new PackagesTask);
         $runner->addTask(new PhpTask);
         $runner->addTask(new ProjectsInitTask);
         $runner->addTask(new ProjectsProcessTask);
         $runner->addTask(new ServiceRestartTask);
+        $runner->addTask(new ConfigDefaultsTask);
         $runner->addTask(new ConfigSyncTask);
         $runner->addTask(new EndTask);
 

@@ -2,6 +2,9 @@
 
 namespace Dashbrew\Cli\Util;
 
+/*
+ * @todo refactor this
+ */
 class ServiceManager extends Registry {
 
     private static $key = 'services';

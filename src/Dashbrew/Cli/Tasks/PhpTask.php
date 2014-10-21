@@ -127,6 +127,33 @@ class PhpTask extends Task {
             $fs->remove($meta['_path']);
             throw new \Exception("Unable to build php");
         }
+
+        // @todo fix code duplication issue since this code is already defined in initTask
+        if(!$meta['_is_installed']){
+            SyncManager::addRule(SyncManager::SYNC_FILE, [
+              'path'    => "/opt/phpbrew/php/$meta[_build]/etc/php.ini",
+              'source'  => "/vagrant/config/phpbrew/$meta[_build]/php.ini",
+              'default' => "/opt/phpbrew/php/$meta[_build]/etc/php.ini",
+              'owner'   => 'vagrant',
+              'group'   => 'vagrant',
+            ]);
+
+            SyncManager::addRule(SyncManager::SYNC_FILE, [
+              'path'    => "/opt/phpbrew/php/$meta[_build]/etc/php-fpm.conf",
+              'source'  => "/vagrant/config/phpbrew/$meta[_build]/php-fpm.conf",
+              'default' => "/opt/phpbrew/php/$meta[_build]/etc/php-fpm.conf",
+              'owner'   => 'vagrant',
+              'group'   => 'vagrant',
+            ]);
+
+            SyncManager::addRule(SyncManager::SYNC_DIR, [
+              'path'    => "/opt/phpbrew/php/$meta[_build]/var/db",
+              'source'  => "/vagrant/config/phpbrew/$meta[_build]/conf.d",
+              'default' => "/opt/phpbrew/php/$meta[_build]/var/db",
+              'owner'   => 'vagrant',
+              'group'   => 'vagrant',
+            ]);
+        }
     }
 
     /**
