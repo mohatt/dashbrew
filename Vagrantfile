@@ -38,7 +38,7 @@ Vagrant.configure(2) do |config|
   config.vm.synced_folder "public/", "/var/www/", group: 'www-data', :owner => "vagrant", :mount_options => [ "dmode=775", "fmode=764" ]
 
   # Run the main shell provisioner.
-  config.vm.provision 'shell' do |s|
+  config.vm.provision 'shell', run: 'always' do |s|
     s.path        = 'provision/provision.sh'
     s.privileged  = true
   end
