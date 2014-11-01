@@ -112,13 +112,28 @@ class PhpTask extends Task {
             throw new \Exception("Build variants for php $meta[_build] are not defined in environment.yaml file");
         }
 
+        if(!is_array($meta['variants'])) {
+            $meta['variants'] = [$meta['variants']];
+        }
+
+        if(!empty($meta['_old']) && !is_array($meta['_old']['variants'])) {
+            $meta['_old']['variants'] = [$meta['_old']['variants']];
+        }
+
         if($meta['_is_installed'] && !empty($meta['_old']) && $meta['_old']['version'] == $meta['version'] && $meta['_old']['variants'] == $meta['variants']){
             return;
         }
 
         $this->output->writeInfo("Building php from source");
         $this->output->writeInfo("This may take a while depending on your cpu(s)...");
-        $proc = $this->runScript('php.install', $meta['_build'], $meta['version'], $meta['variants']);
+
+        foreach ($meta['variants'] as $i => $variant){
+            if(false === strpos($variant, '--', 0)){
+                $meta['variants'][$i] = '+' . $variant;
+            }
+        }
+
+        $proc = $this->runScript('php.install', $meta['_build'], $meta['version'], implode(" ", $meta['variants']));
         if($proc->isSuccessful()){
             $this->output->writeInfo("Successfully built php");
             // Get a copy of the log file
