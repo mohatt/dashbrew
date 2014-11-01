@@ -28,6 +28,20 @@ class InitTask extends Task {
             throw new \Exception("The Init task can only be run by the Provision command.");
         }
 
+        // Check box version
+        if(!file_exists('/etc/dashbrew/.version')){
+            throw new \Exception("Unable to find base box version file.");
+        }
+
+        $box_version = file_get_contents('/etc/dashbrew/.version');
+        if(empty($box_version)){
+            throw new \Exception("Invalid base box version file.");
+        }
+
+        if(false === strpos($box_version, DASHBREW_BASEBOX_VERSION, 0)){
+            throw new \Exception("Incompatible base box version ($box_version). Dashbrew requires a base box version ".DASHBREW_BASEBOX_VERSION.".x");
+        }
+
         // Parse & initialize config.yaml file
         $this->output->writeInfo("Initializing environment.yaml");
         Config::init();

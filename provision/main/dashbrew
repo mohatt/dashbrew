@@ -1,6 +1,9 @@
 #!/usr/bin/php
 <?php
 
+// Set the required base box version
+define('DASHBREW_BASEBOX_VERSION', '0.1');
+
 // Initialize the autoloader
 require __DIR__ . '/../../src/autoload.php';
 
