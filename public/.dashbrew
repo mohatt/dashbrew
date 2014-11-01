@@ -1,7 +1,8 @@
 ---
 local.dev:
-  php: system
   title: Server Root
+  php:
+    build: system
   shortcuts:
     - title: Server Root
       url: http://local.dev/
@@ -32,8 +33,9 @@ monit.dev:
       url: http://127.0.0.1:2812/
 
 phpmyadmin.dev:
-  php: system
   title: phpMyAdmin
+  php:
+    build: system
   shortcuts:
     - title: phpMyAdmin
       url: http://phpmyadmin.dev/

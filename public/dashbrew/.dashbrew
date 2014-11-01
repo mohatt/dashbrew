@@ -1,7 +1,8 @@
 ---
 dashbrew.dev:
   title: Dashbrew
-  php: system
+  php:
+    build: system
   vhost:
     servername: dashbrew.dev
     serveraliases:

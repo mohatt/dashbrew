@@ -4,6 +4,9 @@
         <ul class="nav navbar-nav">
             <li class="active"><a href="#tab-general" role="tab" data-toggle="tab">General</a></li>
             <li><a href="#tab-vhost" role="tab" data-toggle="tab">Vhost</a></li>
+            <?php if(!empty($project['php'])): ?>
+                <li><a href="#tab-php" role="tab" data-toggle="tab">PHP</a></li>
+            <?php endif; ?>
         </ul>
     </nav>
     <div class="tab-content navbar-content">
@@ -15,8 +18,6 @@
                 <dd><?= $project['_path'] ?></dd>
                 <dt>Title</dt>
                 <dd><?= $project['title'] ?></dd>
-                <dt>PHP Version</dt>
-                <dd><?= _yamlprint_string($project, 'php', 'None') ?></dd>
                 <?php if(!empty($project['http'])): ?>
                     <dt>Http</dt>
                     <dd><a href="<?= $project['http'] ?>" target="_blank"><?= $project['http'] ?></a></dd>
@@ -56,6 +57,12 @@
                 <?php endif; ?>
             </dl>
         </div>
+        <?php if(!empty($project['php'])): ?>
+        <div class="tab-pane" id="tab-php">
+            <dt>PHP Build</dt>
+            <dd><?= _yamlprint_string($project['php'], 'build', 'None') ?></dd>
+        </div>
+        <?php endif; ?>
     </div>
 
 </div>
