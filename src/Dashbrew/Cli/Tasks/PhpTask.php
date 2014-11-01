@@ -133,8 +133,16 @@ class PhpTask extends Task {
             }
         }
 
+        // stop php-fpm if we are rebuilding php
+        if($meta['_is_installed']){
+            $this->stopFpm($meta['_build']);
+        }
+
         $proc = $this->runScript('php.install', $meta['_build'], $meta['version'], implode(" ", $meta['variants']));
-        if($proc->isSuccessful()){
+        if($proc->isSuccessful() && file_exists($meta['_path'] . '/bin/php')){
+            // we need this directory to be available right after successfull build
+            // since phpbrew doesn't make this directory by default
+            $fs->mkdir($meta['_path'] . '/var/db', 0755, 'vagrant');
             $this->output->writeInfo("Successfully built php");
             // Get a copy of the log file
             $log_from = "/opt/phpbrew/build/php-$meta[version]/build.log";
