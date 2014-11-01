@@ -8,7 +8,7 @@
 # Ignore public directory
 /public/*
 !/public/dashbrew
-!/public/Projectfile.yaml
+!/public/.dashbrew
 
 # ignore any log files
 *.log

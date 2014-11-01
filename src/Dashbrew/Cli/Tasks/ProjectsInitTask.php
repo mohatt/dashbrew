@@ -47,7 +47,8 @@ class ProjectsInitTask extends Task {
         $finder = new Finder;
         $finder->files()
             ->in('/vagrant/public')
-            ->name('Projectfile.yaml')
+            ->name('.dashbrew')
+            ->ignoreDotFiles(false)
             ->depth('< 5')
             ->sort(function (\SplFileInfo $a, \SplFileInfo $b){
                 return strcmp($a->getPath(), $b->getPath());
