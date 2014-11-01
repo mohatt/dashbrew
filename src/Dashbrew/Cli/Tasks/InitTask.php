@@ -29,7 +29,7 @@ class InitTask extends Task {
         }
 
         // Parse & initialize config.yaml file
-        $this->output->writeInfo("Initializing config.yaml");
+        $this->output->writeInfo("Initializing environment.yaml");
         Config::init();
 
         if(Config::get('debug')){

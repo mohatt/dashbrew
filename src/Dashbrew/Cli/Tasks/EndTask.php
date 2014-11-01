@@ -25,7 +25,7 @@ class EndTask extends Task {
         }
 
         // Write current config file to be used in the next provisioning process
-        $this->output->writeDebug("Writing a copy of the current config.yaml file");
+        $this->output->writeDebug("Writing a copy of the current environment.yaml file");
         Config::writeOld();
     }
 }

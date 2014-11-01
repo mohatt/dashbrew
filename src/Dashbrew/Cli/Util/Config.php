@@ -7,22 +7,18 @@ namespace Dashbrew\Cli\Util;
  *
  * @package Dashbrew\Util
  */
-/**
- * Class Config
- * @package Dashbrew\Cli\Util
- */
 class Config {
 
     /**
      * The path to the main config file
      */
-    const CONFIG_FILE       = '/vagrant/config/config.yaml';
+    const CONFIG_FILE       = '/vagrant/config/environment.yaml';
 
     /**
      * The path to the previous version of the config file, it is being used to
      *  detect deleted config enteries
      */
-    const CONFIG_FILE_OLD   = '/vagrant/provision/main/etc/config.yaml.old';
+    const CONFIG_FILE_OLD   = '/vagrant/provision/main/etc/environment.yaml.old';
 
     /**
      * Default config values

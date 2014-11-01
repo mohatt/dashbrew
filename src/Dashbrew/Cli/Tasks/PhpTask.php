@@ -109,7 +109,7 @@ class PhpTask extends Task {
         }
 
         if(empty($meta['variants'])){
-            throw new \Exception("Build variants for php $meta[_build] are not defined in config.yaml file");
+            throw new \Exception("Build variants for php $meta[_build] are not defined in environment.yaml file");
         }
 
         if($meta['_is_installed'] && !empty($meta['_old']) && $meta['_old']['version'] == $meta['version'] && $meta['_old']['variants'] == $meta['variants']){
@@ -168,7 +168,7 @@ class PhpTask extends Task {
      */
     protected function manageExtensions($meta) {
 
-        // skip if php is to be removed or no extensions has been defined in config.yaml
+        // skip if php is to be removed or no extensions has been defined in environment.yaml
         if(empty($meta['extensions']) || !$meta['installed']){
             return;
         }

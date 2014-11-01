@@ -27,6 +27,7 @@ php::builds:
         version: latest
     fpm:
       port: 9002
+      autostart: true
 
 #
 # Apache Modules
@@ -49,4 +50,4 @@ npm::packages:
 #
 # Enables extra information during provisioning
 #
-debug: true
+debug: false
