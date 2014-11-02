@@ -150,29 +150,34 @@ class InitTask extends Task {
             ]
         ];
 
-        $phps = Util::getInstalledPhps();
-        foreach ($phps as $php_dirname) {
+        $installed_phps = Util::getInstalledPhps();
+        $phps = Config::get('php::builds');
+        foreach ($phps as $build => $meta) {
+
+            if(!in_array($build, $installed_phps)){
+                continue;
+            }
 
             $config_dirs[]  = [
-                'path'    => "/opt/phpbrew/php/$php_dirname/var/db",
-                'source'  => "/vagrant/config/phpbrew/$php_dirname/conf.d",
-                'default' => "/opt/phpbrew/php/$php_dirname/var/db",
+                'path'    => "/opt/phpbrew/php/$build/var/db",
+                'source'  => "/vagrant/config/phpbrew/$build/conf.d",
+                'default' => "/opt/phpbrew/php/$build/var/db",
                 'owner'   => 'vagrant',
                 'group'   => 'vagrant',
             ];
 
             $config_files[] = [
-                'path'    => "/opt/phpbrew/php/$php_dirname/etc/php.ini",
-                'source'  => "/vagrant/config/phpbrew/$php_dirname/php.ini",
-                'default' => "/opt/phpbrew/php/$php_dirname/etc/php.ini",
+                'path'    => "/opt/phpbrew/php/$build/etc/php.ini",
+                'source'  => "/vagrant/config/phpbrew/$build/php.ini",
+                'default' => "/opt/phpbrew/php/$build/etc/php.ini",
                 'owner'   => 'vagrant',
                 'group'   => 'vagrant',
             ];
 
             $config_files[] = [
-                'path'    => "/opt/phpbrew/php/$php_dirname/etc/php-fpm.conf",
-                'source'  => "/vagrant/config/phpbrew/$php_dirname/php-fpm.conf",
-                'default' => "/opt/phpbrew/php/$php_dirname/etc/php-fpm.conf",
+                'path'    => "/opt/phpbrew/php/$build/etc/php-fpm.conf",
+                'source'  => "/vagrant/config/phpbrew/$build/php-fpm.conf",
+                'default' => "/opt/phpbrew/php/$build/etc/php-fpm.conf",
                 'owner'   => 'vagrant',
                 'group'   => 'vagrant',
             ];
