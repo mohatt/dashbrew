@@ -43,7 +43,12 @@ class InitTask extends Task {
         }
 
         // Parse & initialize config.yaml file
-        $this->output->writeInfo("Initializing environment.yaml");
+        if(file_exists(Config::CONFIG_FILE)){
+            $this->output->writeInfo("Initializing environment.yaml");
+        }
+        else {
+            $this->output->writeInfo("Provisioning without environment.yaml config file");
+        }
         Config::init();
 
         if(Config::get('debug')){
