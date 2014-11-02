@@ -15,7 +15,7 @@ Vagrant.configure(2) do |config|
   #
   # This is the IP address that your host will communicate to the guest through.
   #
-  # If you are already on a network using the 192.168.50.x subnet, this should be changed.
+  # If you are already on a network using the 192.168.10.x subnet, this should be changed.
   # If you are running more than one VM through VirtualBox, different subnets should be used
   # for those as well. This includes other Vagrant boxes.
   config.vm.network :private_network, ip: "192.168.10.10"
@@ -46,7 +46,7 @@ Vagrant.configure(2) do |config|
   # Check if vagrant-hosts-provisioner plugin is installed
   if Vagrant.has_plugin?("vagrant-hosts-provisioner")
     # Run the hostsupdate provisioner
-    config.vm.provision :hostsupdate do |host|
+    config.vm.provision :hostsupdate, run: 'always' do |host|
       # Don't include the machine hostname
       host.hostname = false
       # Update the guest machine
