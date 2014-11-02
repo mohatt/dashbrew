@@ -9,4 +9,4 @@ BUILDDIR="/opt/phpbrew/php/${BUILD}"
 VERSION=$(echo "$2")
 VARIANTS=$(echo "$3")
 
-phpbrew install --alias "${BUILD}" ${VERSION} ${VARIANTS}
+phpbrew install ${VERSION} as "${BUILD}" using ${VARIANTS}
