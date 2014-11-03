@@ -67,7 +67,7 @@ class Config {
             self::mergeOldConfig();
         }
 
-        //@todo add a method to validate user config
+        self::validateConfig();
     }
 
     /**
@@ -136,7 +136,31 @@ class Config {
     }
 
     /**
-     * @return array
+     *
+     */
+    protected static function validateConfig() {
+
+        //@todo add more in-depth validation and throw exceptions when needed
+
+        foreach(self::$config as $key => $value){
+            switch($key){
+                case 'os::packages':
+                case 'php::builds':
+                case 'apache::modules':
+                case 'npm::packages':
+                    self::$config[$key] = (array) $value;
+                    self::$configOld[$key] = (array) $value;
+                    break;
+                case 'debug':
+                    self::$config[$key] = (bool) $value;
+                    self::$configOld[$key] = (bool) $value;
+                    break;
+            }
+        }
+    }
+
+    /**
+     *
      */
     protected static function mergeOldConfig() {
 
