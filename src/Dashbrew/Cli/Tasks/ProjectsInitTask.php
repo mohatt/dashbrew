@@ -8,7 +8,6 @@ use Dashbrew\Cli\Util\Util;
 use Dashbrew\Cli\Util\Config;
 use Dashbrew\Cli\Util\Registry;
 use Dashbrew\Cli\Util\Projects;
-use Dashbrew\Cli\Util\Finder;
 
 /**
  * ProjectsInit Task Class.
@@ -39,20 +38,23 @@ class ProjectsInitTask extends Task {
             'delete'  => [],
         ];
 
+        $publicdb = '/etc/dashbrew/public.fndb';
+        $proc = Util::process($this->output, "updatedb -U /vagrant/public -o $publicdb");
+        if(!$proc->isSuccessful()){
+            throw new \Exception("Failed indexing '/vagrant/public' directory");
+        }
+
+        $files = [];
+        $proc = Util::process($this->output, "locate -d $publicdb -i -b '*.dashbrew'");
+        if($proc->isSuccessful()){
+            $files = explode("\n", trim($proc->getOutput(), "\n"));
+        }
+
         $yaml = Util::getYamlParser();
-
-        $finder = new Finder;
-        $finder->files()
-            ->in('/vagrant/public')
-            ->name('.dashbrew')
-            ->ignoreDotFiles(false)
-            ->depth('< 5')
-            ->sort(function (\SplFileInfo $a, \SplFileInfo $b){
-                return strcmp($a->getPath(), $b->getPath());
-            });
-
-        foreach($finder as $file){
-            $file_path = $file->getPathname();
+        foreach($files as $file_path){
+            if(!is_file($file_path)){
+                continue;
+            }
 
             try {
                 $file_projects = $yaml->parse(file_get_contents($file_path));
