@@ -26,11 +26,16 @@ class ProjectsProcessTask extends Task {
             throw new \Exception("The ProjectsProcess task can only be run by the Provision command.");
         }
 
-        $projects = Registry::get('projects');
+        $projects = Registry::get('projects', []);
         foreach($projects as $action => $action_projects){
             foreach($action_projects as $id => $project){
                 if(!empty($project['vhost'])){
                     $this->processVhost($action, $id, $project);
+                    $this->processHosts($action, $id, $project);
+                }
+
+                if(!empty($project['shortcuts'])){
+                    $this->processShortcuts($action, $id, $project);
                 }
             }
         }
@@ -187,6 +192,52 @@ class ProjectsProcessTask extends Task {
                 $this->output->writeDebug("{$verbs['skip'][0]} {$verbs[$action][0]} apache ssl vhost for '$id'");
             }
         }
+    }
+
+    /**
+     * Manages project hosts
+     *
+     * @param $action
+     * @param $id
+     * @param $project
+     * @throws \Exception
+     */
+    protected function processHosts($action, $id, $project) {
+
+        $hosts  = Registry::get('projectsHosts', []);
+
+        if(!empty($project['vhost']['servername'])){
+            $hosts[] = $project['vhost']['servername'];
+        }
+
+        if(!empty($project['vhost']['serveraliases'])){
+            foreach($project['vhost']['serveraliases'] as $serveralias){
+                $hosts[] = $serveralias;
+            }
+        }
+
+        Registry::set('projectsHosts', $hosts);
+    }
+
+    /**
+     * Manages project shortcuts
+     *
+     * @param $action
+     * @param $id
+     * @param $project
+     * @throws \Exception
+     */
+    protected function processShortcuts($action, $id, $project) {
+
+        $shortcuts  = Registry::get('projectsShortcuts', []);
+
+        foreach($project['shortcuts'] as $shortcut){
+            if(!empty($shortcut['title']) && !empty($shortcut['url'])){
+                $shortcuts[] = $shortcut;
+            }
+        }
+
+        Registry::set('projectsShortcuts', $shortcuts);
     }
 
     /**

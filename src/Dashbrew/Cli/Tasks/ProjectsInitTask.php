@@ -13,7 +13,7 @@ use Dashbrew\Cli\Util\Finder;
 /**
  * ProjectsInit Task Class.
  *
- * Finds and initializes projects defined under public/ directory.
+ * Finds and initializes .dashbrew projects under public/ directory.
  *
  * @package Dashbrew\Cli\Tasks
  */
@@ -31,9 +31,6 @@ class ProjectsInitTask extends Task {
         $this->output->writeInfo("Finding projects");
 
         $projects_catalog = Projects::get();
-
-        $hosts = [];
-        $shortcuts = [];
         $projects = [
             'skip'    => [],
             'check'   => [],
@@ -88,8 +85,8 @@ class ProjectsInitTask extends Task {
                     # Ignore duplicates
                     if (isset($projects['create'][$id])){
                         $this->output->writeError(
-                            "Unable to proccess project '$id' at '$project[_path]', " .
-                            "another project with the same name is already exist at '$projects[create][$id][_path]'."
+                            "Unable to proccess project '$id' at '{$project['_path']}', " .
+                            "another project with the same name is already exist at '{$projects['create'][$id]['_path']}'."
                         );
 
                         continue;
@@ -103,27 +100,6 @@ class ProjectsInitTask extends Task {
                 if(isset($projects_catalog[$id])){
                     unset($projects_catalog[$id]);
                 }
-
-                if(!empty($project['vhost']['servername'])){
-                    $hosts[] = $project['vhost']['servername'];
-                }
-                else {
-                    $hosts[] = $id;
-                }
-
-                if(isset($project['vhost']['serveraliases'])){
-                    foreach($project['vhost']['serveraliases'] as $serveralias){
-                        $hosts[] = $serveralias;
-                    }
-                }
-
-                if(!empty($project['shortcuts'])){
-                    foreach($project['shortcuts'] as $shortcut){
-                        if(!empty($shortcut['title']) && !empty($shortcut['url'])){
-                            $shortcuts[] = $shortcut;
-                        }
-                    }
-                }
             }
         }
 
@@ -132,8 +108,8 @@ class ProjectsInitTask extends Task {
             foreach(['skip', 'check', 'modify'] as $action){
                 if (isset($projects[$action][$id])){
                     $this->output->writeError(
-                        "Unable to proccess project '$id' at '$project[_path]', " .
-                        "another project with the same name is already exist at '$projects[$action][$id][_path]'."
+                        "Unable to proccess project '$id' at '{$project['_path']}', " .
+                        "another project with the same name is already exist at '{$projects[$action][$id]['_path']}'."
                     );
 
                     unset($projects['create'][$id]);
@@ -167,23 +143,7 @@ class ProjectsInitTask extends Task {
             );
         }
         else {
-            $this->output->writeDebug("Found " . $projects_total . " project(s)");
-        }
-
-        # Write projects catalog file
-        $projects_catalog = array_merge($projects['skip'], $projects['check'], $projects['modify'], $projects['create']);
-        if(Projects::writeCatalog($projects_catalog)){
-            $this->output->writeInfo("Updated projects catalog file");
-        }
-
-        # Write hosts file so that it can be accessed later by the Hostmanager plugin
-        if(Projects::writeHosts($hosts)){
-            $this->output->writeInfo("Updated projects hosts file");
-        }
-
-        # Write shortcuts file so that it can be accessed later by dashbrew web dashboard
-        if(Projects::writeShortcuts($shortcuts)){
-            $this->output->writeInfo("Updated projects shortcuts file");
+            $this->output->writeDebug("Found $projects_total project(s)");
         }
     }
 

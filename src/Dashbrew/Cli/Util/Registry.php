@@ -12,10 +12,10 @@ class Registry {
         return true;
     }
 
-    public static function get($key) {
+    public static function get($key, $default = null) {
 
         if(!isset(self::$objects[$key])){
-            return null;
+            return $default;
         }
 
         return self::$objects[$key];
