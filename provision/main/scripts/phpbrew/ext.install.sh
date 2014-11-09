@@ -9,4 +9,4 @@ EXTNAME=$(echo "$2")
 EXTVERSION=$(echo "$3")
 
 phpbrew use ${BUILD}
-phpbrew ext install ${EXTNAME} ${EXTVERSION}
+phpbrew --no-progress ext install ${EXTNAME} ${EXTVERSION}
