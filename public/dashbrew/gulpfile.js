@@ -48,7 +48,7 @@ var paths = {
     {
       src: 'src/less/dashboard/dashboard.less',
       dest: 'assets/css/dashboard.css',
-      minify: false
+      minify: true
     },
     {
       src: 'src/less/codemirror.less',
