@@ -42,6 +42,47 @@ class InitTask extends Task {
             throw new \Exception("Incompatible base box version ($box_version). Dashbrew requires a base box version ".DASHBREW_BASEBOX_VERSION.".x");
         }
 
+        $this->output->writeDebug("Checking for available " . $box_version . " patches");
+        $box_patch_file = '/etc/dashbrew/.patch';
+        $box_patch_md5 = null;
+        if(file_exists($box_patch_file)){
+            $box_patch_md5 = file_get_contents($box_patch_file);
+        }
+
+        $available_patch = file_get_contents('https://raw.githubusercontent.com/mdkholy/dashbrew-basebox/master/patches/' . $box_version.  '.sh');
+        $apply_patch = false;
+        if(!empty($available_patch)){
+            $available_patch_md5 = md5($available_patch);
+            if($box_patch_md5 != $available_patch_md5){
+                $apply_patch = true;
+            }
+        }
+
+        if($apply_patch){
+            $this->output->writeInfo("An update patch is available for your box. Updating...");
+            $fs = Util::getFilesystem();
+
+            $exec_patch_file = '/tmp/dashbrew-basebox-patch.sh';
+            $fs->write($exec_patch_file, $available_patch, 'root');
+            $fs->chmod($exec_patch_file, 0755);
+
+            $proc = Util::Process($this->output, "sudo bash $exec_patch_file", ['timeout' => null]);
+            if($proc->isSuccessful()){
+                $this->output->writeInfo("Update patch has been applied successfully");
+            }
+            else {
+                $this->output->writeError("Error occured while applying update patch");
+            }
+
+            //$fs->remove($exec_patch_file);
+
+            $fs->write($box_patch_file, $available_patch_md5);
+            $fs->chmod($box_patch_file, 0644);
+        }
+
+        //print_r($available_patch_md5);
+        die;
+
         // Parse & initialize config.yaml file
         if(file_exists(Config::CONFIG_FILE)){
             $this->output->writeInfo("Initializing environment.yaml");
