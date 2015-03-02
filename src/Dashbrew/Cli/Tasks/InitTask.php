@@ -74,14 +74,11 @@ class InitTask extends Task {
                 $this->output->writeError("Error occured while applying update patch");
             }
 
-            //$fs->remove($exec_patch_file);
+            $fs->remove($exec_patch_file);
 
             $fs->write($box_patch_file, $available_patch_md5);
             $fs->chmod($box_patch_file, 0644);
         }
-
-        //print_r($available_patch_md5);
-        die;
 
         // Parse & initialize config.yaml file
         if(file_exists(Config::CONFIG_FILE)){

@@ -6,7 +6,7 @@ Vagrant.require_version '>= 1.6.0'
 Vagrant.configure(2) do |config|
 
   # Every Vagrant virtual environment requires a box to build off of.
-  config.vm.box = "ubuntu-14.04-dashbrew"
+  config.vm.box = "mdkholy/dashbrew"
 
   # The hostname the machine should have.
   config.vm.hostname = "dashbrew.vm"
