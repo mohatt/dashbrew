@@ -17,7 +17,7 @@ php::builds:
   5.6.0:
     installed: true
     default: true
-    variants: +dev
+    variants: dev
     extensions:
       xdebug:
         enabled: true
