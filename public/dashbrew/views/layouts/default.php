@@ -51,13 +51,13 @@
       </ul>
       <div class="sidebar-footer">
         <div class="col-xs-4">
-          <a href="#" target="_blank">Github</a>
+          <a href="https://github.com/mdkholy/dashbrew" target="_blank">Github</a>
         </div>
         <div class="col-xs-4">
-          <a href="#" target="_blank">About</a>
+          <a href="https://github.com/mdkholy/dashbrew/blob/master/README.md" target="_blank">About</a>
         </div>
         <div class="col-xs-4">
-          <a href="#">Support</a>
+          <a href="https://github.com/mdkholy/dashbrew/issues" target="_blank">Support</a>
         </div>
       </div>
     </div>
