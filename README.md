@@ -26,13 +26,13 @@ Dashbrew provisioner is a PHP command-line application built on top of Symfony c
 
 ## Getting Started
 
-### Software Requirements
+### System Requirements
 
 Before launching your Dashbrew environment, you must install VirtualBox and Vagrant. Both of these software packages provide easy-to-use visual installers for all popular operating systems.
 
 * [Vagrant >= 1.6.5](http://www.vagrantup.com/)
 * [VirtualBox 4.3.x](https://www.virtualbox.org/)
-	* The [Dashbrew base box](https://github.com/mdkholy/Dashbrew-Basebox) is built using VirtualBox 4.3.18 but if you would like to run it on another VirtualBox 4.3.x version, you will need to install [vagrant-vbguest plugin](https://github.com/dotless-de/vagrant-vbguest).
+	* The current version of [Dashbrew base box](https://github.com/mdkholy/Dashbrew-Basebox) is built using VirtualBox 4.3.18 but if you would like to run it on another VirtualBox 4.3.x version, you will need to install [vagrant-vbguest plugin](https://github.com/dotless-de/vagrant-vbguest).
 * [Vagrant Hosts Provisioner plugin](https://github.com/mdkholy/vagrant-hosts-provisioner) for managing the /etc/hosts file of both the host and guest machines.
 	* ``$ vagrant plugin install vagrant-hosts-provisioner``
 
