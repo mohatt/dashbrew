@@ -16,7 +16,7 @@ For more information on the Packer template used to build the base box and the c
 
 ### Dashbrew provisioner
 
-The Vagrant virtual machine is provisioned using a custom provisioning system (i.e. Dashbrew provisioner) written in pure PHP. This eliminates the need to learn complex provisioning systems (e.g. Puppet or Chef) in order to extend or modify the provisioning process.
+The Vagrant virtual machine is provisioned using a custom provisioning system (i.e. Dashbrew Provisioner) written in pure PHP. This eliminates the need to learn complex provisioning systems (e.g. Puppet or Chef) in order to extend or modify the provisioning process.
 
 Dashbrew provisioner is a PHP command-line application built on top of Symfony components and is used to perform several tasks on the virtual machine based on your configurations. Examples for these tasks include:
 
