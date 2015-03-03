@@ -2,7 +2,7 @@
 
 ## What is Dashbrew?
 
-Dashbrew is a [Vagrant](http://www.vagrantup.com/) build aims at providing a powerful PHP development environment that can be used as a replacement for local development stacks such as MAMP, XAMPP, and others. It provides an easy way to manage, organize and develop PHP projects and comes with a unique dashboard that allows managing various environment aspects. It also comes preinstalled with [all software and tools](https://github.com/mdkholy/dashbrew-basebox#installed-components) needed to start developing right out of the box.
+Dashbrew is a [Vagrant](http://www.vagrantup.com/) build that aims at providing a powerful PHP development environment that can be used as a replacement for local development stacks such as MAMP, XAMPP, and others. It provides an easy way to manage, organize and develop PHP projects and comes with a unique dashboard that allows managing various environment aspects. It also comes preinstalled with [all software and tools](https://github.com/mdkholy/dashbrew-basebox#installed-components) needed to start developing right out of the box.
 
 Dashbrew makes use of [phpbrew](https://github.com/phpbrew/phpbrew) &mdash; the wonderful PHP version management utility &mdash; to allow developing both web and command-line projects on different PHP versions and configurations on the same development environment.
 
