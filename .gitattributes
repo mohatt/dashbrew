@@ -3,6 +3,7 @@
 
 # Declare files that will always have UNIX line endings on checkout.
 config/* text eol=lf
+src/* text eol=lf
 public/* text eol=lf
 provision/* text eol=lf
 
