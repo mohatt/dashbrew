@@ -8,6 +8,7 @@ function run_scripts() {
         echo "[Info] Running ${dir}-provisioning scripts in provision/${dir}"
 
         find ${dir_path} -maxdepth 1 -type f -name '*.sh' | sort | while read FILENAME; do
+            chmod 755 "${FILENAME}"
             # /bin/bash "${FILENAME}"
             ${FILENAME}
         done
@@ -20,6 +21,7 @@ function run_scripts() {
 run_scripts pre
 
 # Run dashbrew provisioner
+chmod 755 /vagrant/provision/main/dashbrew
 /vagrant/provision/main/dashbrew provision
 
 # Run the post-provisioning scripts
