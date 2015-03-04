@@ -4,9 +4,7 @@
 # Declare files that will always have UNIX line endings on checkout.
 config/* text eol=lf
 public/* text eol=lf
-provision/main/* text eol=lf
-provision/post/* text eol=lf
-provision/pre/* text eol=lf
+provision/* text eol=lf
 
 # Denote all files that are truly binary and should not be modified.
 *.png binary
