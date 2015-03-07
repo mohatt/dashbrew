@@ -148,12 +148,12 @@ class Config {
                 case 'php::builds':
                 case 'apache::modules':
                 case 'npm::packages':
-                    self::$config[$key] = (array) $value;
-                    self::$configOld[$key] = (array) $value;
+                    self::$config[$key] = (array) self::$config[$key];
+                    self::$configOld[$key] = (array) self::$configOld[$key];
                     break;
                 case 'debug':
-                    self::$config[$key] = (bool) $value;
-                    self::$configOld[$key] = (bool) $value;
+                    self::$config[$key] = (bool) self::$config[$key];
+                    self::$configOld[$key] = (bool) self::$configOld[$key];
                     break;
             }
         }
