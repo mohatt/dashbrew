@@ -145,7 +145,7 @@ class PhpTask extends Task {
             $fs->mkdir($meta['_path'] . '/var/db', 0755, 'vagrant');
             $this->output->writeInfo("Successfully built php");
             // Get a copy of the log file
-            $log_from = "/opt/phpbrew/build/php-$meta[version]/build.log";
+            $log_from = "/opt/phpbrew/build/$meta[_build]/build.log";
             $log_to = "/vagrant/provision/main/logs/phpbuild-$meta[_build].log";
             $fs->copy($log_from, $log_to, true);
             $this->output->writeInfo("Saved build log file to $log_to");
