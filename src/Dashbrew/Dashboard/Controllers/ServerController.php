@@ -112,7 +112,7 @@ class ServerController extends Controller {
                 $phps[$build]['running'] = true;
             }
 
-            if($phps[$build]['default']){
+            if(!empty($phps[$build]['default'])){
                 $default_build = $build;
             }
 
