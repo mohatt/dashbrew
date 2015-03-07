@@ -9,4 +9,5 @@ EXTNAME=$(echo "$2")
 EXTVERSION=$(echo "$3")
 
 phpbrew use ${BUILD}
+phpbrew ext clean --purge ${EXTNAME}
 phpbrew --no-progress ext install ${EXTNAME} ${EXTVERSION}
