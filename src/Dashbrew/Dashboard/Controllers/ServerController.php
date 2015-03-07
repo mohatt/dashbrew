@@ -91,6 +91,7 @@ class ServerController extends Controller {
         }
 
         $phpsInstalled = Util::getInstalledPhps();
+        $default_build = null;
         foreach($phps as $build => $meta){
             if(!in_array($build, $phpsInstalled)){
                 unset($phps[$build]);
@@ -110,6 +111,16 @@ class ServerController extends Controller {
             if(file_exists($pidfile) && trim(file_get_contents($pidfile)) != ""){
                 $phps[$build]['running'] = true;
             }
+
+            if($phps[$build]['default']){
+                $default_build = $build;
+            }
+
+            $phps[$build]['default'] = false;
+        }
+
+        if($default_build){
+            $phps[$default_build]['default'] = true;
         }
 
         return $phps;
