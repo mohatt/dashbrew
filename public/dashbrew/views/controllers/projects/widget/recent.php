@@ -6,7 +6,7 @@
     <div class="list-group-item-subheading">
         <a href="<?= $project['http'] ?>" target="_blank"><?=  $project['host'] ?></a>
     </div>
-    <a class="list-group-item-btn btn btn-default btn-sm" href="javascript:$.openProjectInfo('<?= $_url('/projects/info/' . $id); ?>');">
+    <a class="list-group-item-btn btn btn-default btn-sm" href="javascript:void(0);" onclick="javascript:$.openProjectInfo('<?= $_url('/projects/info/' . $id); ?>');">
         <span class="fa fa-external-link"></span> View
     </a>
 </li>
