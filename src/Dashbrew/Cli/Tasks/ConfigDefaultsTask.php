@@ -48,7 +48,7 @@ class ConfigDefaultsTask extends Task {
             };
         }
 
-        $fs->mkdir($config_sources_dirs, 0777, 'vagrant');
+        $fs->mkdir($config_sources_dirs);
 
         foreach ($config_files as $file){
             if(empty($file['default'])){
@@ -59,7 +59,7 @@ class ConfigDefaultsTask extends Task {
             $origin_file = $file['default'];
             if(!file_exists($target_file)){
                 $this->output->writeInfo("Writing default config file '$target_file'");
-                $fs->copy($origin_file, $target_file, true, 'vagrant');
+                $fs->copy($origin_file, $target_file, true);
             }
         }
 
@@ -75,7 +75,7 @@ class ConfigDefaultsTask extends Task {
             }
 
             $this->output->writeInfo("Writing default config dir '$target_dir'");
-            $fs->mkdir($target_dir, 0777, 'vagrant');
+            $fs->mkdir($target_dir);
             $finder = new Finder;
             foreach($finder->files()->in($source_dir)->ignoreDotFiles(false)->depth('== 0') as $origin_dir_file){
                 $origin_dir_filename = $origin_dir_file->getFilename();
@@ -83,7 +83,7 @@ class ConfigDefaultsTask extends Task {
                 $target_dir_filepath = $target_dir . '/' . $origin_dir_filename;
                 $origin_dir_filepath = $source_dir . '/' . $origin_dir_filename;
 
-                $fs->copy($origin_dir_filepath, $target_dir_filepath, true, 'vagrant');
+                $fs->copy($origin_dir_filepath, $target_dir_filepath, true);
             }
         }
     }

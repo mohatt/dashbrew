@@ -132,7 +132,7 @@ class Config {
             return;
         }
 
-        $fs->copy(self::CONFIG_FILE, self::CONFIG_FILE_OLD, true, 'vagrant');
+        $fs->copy(self::CONFIG_FILE, self::CONFIG_FILE_OLD, true);
     }
 
     /**
