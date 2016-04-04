@@ -29,6 +29,15 @@ Vagrant.configure(2) do |config|
     vb.customize ["modifyvm", :id, "--cpus", "1"]
     vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
     vb.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
+
+    # If Virtualbox is version 5.0.0 or higher, enable the kvm paravirtualization
+    # provider for better performance.
+    begin
+      if VagrantPlugins::ProviderVirtualBox::Driver::Meta.new.version >= "5.0.0"
+        vb.customize ['modifyvm', :id, '--paravirtprovider', 'kvm']
+      end
+    rescue Vagrant::Errors::VirtualBoxNotDetected
+    end
   end
 
   # Synced Folders

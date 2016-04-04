@@ -36,6 +36,7 @@ Before launching your Dashbrew environment, you must install VirtualBox and Vagr
 
 * [Vagrant >= 1.6.5](http://www.vagrantup.com/)
 * [VirtualBox 4.3.x](https://www.virtualbox.org/)
+	* Note that installing Virtualbox 5.x is *strongly* recommended for better performance.
 * [Vagrant Hosts Provisioner plugin](https://github.com/mdkholy/vagrant-hosts-provisioner) for managing the /etc/hosts file of both the host and guest machines.
 	* ``$ vagrant plugin install vagrant-hosts-provisioner``
 
