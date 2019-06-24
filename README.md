@@ -2,11 +2,11 @@
 
 This project is no longer maintained. I've stopped using the workflow that made it relevant to me, and Vagrant synced folders still has some unresolved issues with VirtualBox provider especially on Windows hosts, also PHPBrew is not quite stable yet and not actively maintained. Thanks!
 
-![Dashbrew Logo](https://raw.githubusercontent.com/mdkholy/mdkholy.github.io/master/assets/img/etc/dashbrew-logo-640.png)
+![Dashbrew Logo](https://raw.githubusercontent.com/mohatt/mohatt.github.io/master/assets/img/etc/dashbrew-logo-640.png)
 
 ## What is Dashbrew?
 
-Dashbrew is a [Vagrant](http://www.vagrantup.com/) build that aims at providing a powerful PHP development environment that can be used as a replacement for local development stacks such as MAMP, XAMPP, and others. It provides an easy way to manage, organize and develop PHP projects and comes with a unique dashboard that allows managing various environment aspects. It also comes preinstalled with [all software and tools](https://github.com/mdkholy/dashbrew-basebox#installed-components) needed to start developing right out of the box.
+Dashbrew is a [Vagrant](http://www.vagrantup.com/) build that aims at providing a powerful PHP development environment that can be used as a replacement for local development stacks such as MAMP, XAMPP, and others. It provides an easy way to manage, organize and develop PHP projects and comes with a unique dashboard that allows managing various environment aspects. It also comes preinstalled with [all software and tools](https://github.com/mohatt/dashbrew-basebox#installed-components) needed to start developing right out of the box.
 
 Dashbrew makes use of [phpbrew](https://github.com/phpbrew/phpbrew) &mdash; the wonderful PHP version management utility &mdash; to allow developing both web and command-line projects on different PHP versions and configurations on the same development environment.
 
@@ -14,9 +14,9 @@ Dashbrew makes use of [phpbrew](https://github.com/phpbrew/phpbrew) &mdash; the 
 
 ### The Vagrant Base box
 
-Dashbrew uses a pre-configured vagrant box that runs Ubuntu 14.04.1 LTS (Trusty Tahr) and comes preinstalled with [all components](https://github.com/mdkholy/dashbrew-basebox#installed-components) needed to run Dashbrew environment (e.g. monit, php, apache, mysql, phpbrew). The base box is built using [Packer](https://www.packer.io/).
+Dashbrew uses a pre-configured vagrant box that runs Ubuntu 14.04.1 LTS (Trusty Tahr) and comes preinstalled with [all components](https://github.com/mohatt/dashbrew-basebox#installed-components) needed to run Dashbrew environment (e.g. monit, php, apache, mysql, phpbrew). The base box is built using [Packer](https://www.packer.io/).
 
-For more information on the Packer template used to build the base box and the components that comes pre-installed in it, please visit the [dashbrew-basebox](https://github.com/mdkholy/dashbrew-basebox) repository.
+For more information on the Packer template used to build the base box and the components that comes pre-installed in it, please visit the [dashbrew-basebox](https://github.com/mohatt/dashbrew-basebox) repository.
 
 ### Dashbrew provisioner
 
@@ -36,15 +36,15 @@ Before launching your Dashbrew environment, you must install VirtualBox and Vagr
 
 * [Vagrant >= 1.6.5](http://www.vagrantup.com/)
 * [VirtualBox 4.3.x](https://www.virtualbox.org/)
-* [Vagrant Hosts Provisioner plugin](https://github.com/mdkholy/vagrant-hosts-provisioner) for managing the /etc/hosts file of both the host and guest machines.
+* [Vagrant Hosts Provisioner plugin](https://github.com/mohatt/vagrant-hosts-provisioner) for managing the /etc/hosts file of both the host and guest machines.
 	* ``$ vagrant plugin install vagrant-hosts-provisioner``
 
 ### Adding The Vagrant Box
 
-Once VirtualBox and Vagrant have been installed, you should add the ``mdkholy/dashbrew`` box to your Vagrant installation using the following command in your terminal. It will take a few minutes to download the box, depending on your Internet connection speed:
+Once VirtualBox and Vagrant have been installed, you should add the ``mohatt/dashbrew`` box to your Vagrant installation using the following command in your terminal. It will take a few minutes to download the box, depending on your Internet connection speed:
 
 ```
-$ vagrant box add mdkholy/dashbrew
+$ vagrant box add mohatt/dashbrew
 ```
 
 ### Clone The Dashbrew Repository
@@ -52,7 +52,7 @@ $ vagrant box add mdkholy/dashbrew
 Once the box has been added to your Vagrant installation, you should clone this repository. Consider cloning the repository into a central directory where you keep all of your projects, as Dashbrew will serve as the host to all of your PHP projects.
 
 ```
-$ git clone --recursive git://github.com/mdkholy/dashbrew.git
+$ git clone --recursive git://github.com/mohatt/dashbrew.git
 ```
 
 ***Note:*** The ``--recursive`` is required to clone the repository with all its dependencies (i.e. git submodules).  
@@ -65,7 +65,7 @@ Once you have cloned the Dashbrew Repository, start the Vagrant environment by r
 
 Once the ``vagrant up`` command is finished, you can now launch the Dashbrew Dashboard by visiting [http://dashbrew.dev/](http://dashbrew.dev/) in your browser. Here is a screenshot of what it looks like.
 
-![Dashbrew Dashboard](https://raw.githubusercontent.com/mdkholy/mdkholy.github.io/master/assets/img/etc/dashbrew-dashboard-1024.png)
+![Dashbrew Dashboard](https://raw.githubusercontent.com/mohatt/mohatt.github.io/master/assets/img/etc/dashbrew-dashboard-1024.png)
 
 ## Configuration
 
@@ -106,7 +106,7 @@ php::builds:
       autostart: true
 ```
 
-For more information on how to configure Dashbrew environment, please visit [the wiki page](https://github.com/mdkholy/dashbrew/wiki/configuration).
+For more information on how to configure Dashbrew environment, please visit [the wiki page](https://github.com/mohatt/dashbrew/wiki/configuration).
 
 ## Adding Projects
 
@@ -153,7 +153,7 @@ What we done here is that we added a new project that:
 * can be accessed via ``myproject.dev`` or ``www.myproject.dev``
 * has SSL enabled so that it could be accessed using https
 
-For more information on adding projects, please visit [the wiki page](https://github.com/mdkholy/dashbrew/wiki/Projects).
+For more information on adding projects, please visit [the wiki page](https://github.com/mohatt/dashbrew/wiki/Projects).
 
 ## Shared Configuration Files
 
@@ -163,7 +163,7 @@ Dashbrew uses a bi-directional synchronization logic to keep the shared configur
 
 All shared configuration files are located under ``config/`` directory and are organized in subfolders according their relevant software.
 
-Here is a [list of the currently supported configuration files](https://github.com/mdkholy/dashbrew/wiki/SharedConfigurationFiles).
+Here is a [list of the currently supported configuration files](https://github.com/mohatt/dashbrew/wiki/SharedConfigurationFiles).
 
 ## Applying Your Changes
 
@@ -195,7 +195,7 @@ Whenever you make changes to the Dashbrew environment (e.g. changing a configura
 ## Need Help?
 
 * Don't hesitate to open a new issue on GitHub if you run into trouble.
-* The [Dashbrew Wiki](https://github.com/mdkholy/dashbrew/wiki) also contains documentation that may help.
+* The [Dashbrew Wiki](https://github.com/mohatt/dashbrew/wiki) also contains documentation that may help.
 
 ## Want to help?
 
