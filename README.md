@@ -2,7 +2,7 @@
 
 This project is no longer maintained. I've stopped using the workflow that made it relevant to me, and Vagrant synced folders still has some unresolved issues with VirtualBox provider especially on Windows hosts, also PHPBrew is not quite stable yet and not actively maintained. Thanks!
 
-![Dashbrew Logo](https://raw.githubusercontent.com/mohatt/mohatt.github.io/master/assets/img/etc/dashbrew-logo-640.png)
+![Dashbrew Logo](https://raw.githubusercontent.com/mohatt/mohatt.github.io/v1/assets/img/etc/dashbrew-logo-640.png)
 
 ## What is Dashbrew?
 
@@ -65,7 +65,7 @@ Once you have cloned the Dashbrew Repository, start the Vagrant environment by r
 
 Once the ``vagrant up`` command is finished, you can now launch the Dashbrew Dashboard by visiting [http://dashbrew.dev/](http://dashbrew.dev/) in your browser. Here is a screenshot of what it looks like.
 
-![Dashbrew Dashboard](https://raw.githubusercontent.com/mohatt/mohatt.github.io/master/assets/img/etc/dashbrew-dashboard-1024.png)
+![Dashbrew Dashboard](https://raw.githubusercontent.com/mohatt/mohatt.github.io/v1/assets/img/etc/dashbrew-dashboard-1024.png)
 
 ## Configuration
 
