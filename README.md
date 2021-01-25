@@ -1,6 +1,6 @@
 # :warning: Warning
 
-This project is no longer maintained. I've stopped using the workflow that made it relevant to me, and Vagrant synced folders still has some unresolved issues with VirtualBox provider especially on Windows hosts, also PHPBrew is not quite stable yet and not actively maintained. Thanks!
+This project is no longer maintained. I've stopped using the workflow that made it relevant to me, and Vagrant synced folders still has some unresolved issues with VirtualBox provider especially on Windows hosts. I have moved to Docker now cause I think its better alternative. Thanks!
 
 ![Dashbrew Logo](https://raw.githubusercontent.com/mohatt/mohatt.github.io/v1/assets/img/etc/dashbrew-logo-640.png)
 
