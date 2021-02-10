@@ -85,7 +85,7 @@ class ConfigSyncTask extends Task {
             }
 
             $this->output->writeInfo("Syncing config file '$source_file' " . ($copy_from == $source_file ? "->" : "<-" ) . " '$target_file'");
-            $fs->copy($copy_from, $copy_to, true, $copy_owner, $copy_group);
+            $fs->copy($copy_from, $copy_to, true);
         }
     }
 
@@ -156,7 +156,7 @@ class ConfigSyncTask extends Task {
                     }
 
                     $this->output->writeInfo("Syncing config file '$source_dir_filepath' " . ($copy_from == $source_dir_filepath ? "->" : "<-" ) . " '$target_dir_filepath'");
-                    $fs->copy($copy_from, $copy_to, true, $copy_owner, $copy_group);
+                    $fs->copy($copy_from, $copy_to, true);
                 }
                 // Delete file from source dir
                 else if(in_array($source_dir_filename, $dir_sync_status['old'])){
@@ -168,7 +168,7 @@ class ConfigSyncTask extends Task {
                     $dir_sync_status['new'][] = $source_dir_filename;
 
                     $this->output->writeInfo("Copying config file '$source_dir_filepath' -> '$target_dir_filepath'");
-                    $fs->copy($source_dir_filepath, $target_dir_filepath, true, $target_dir_owner, $target_dir_group);
+                    $fs->copy($source_dir_filepath, $target_dir_filepath, true);
                 }
             }
 
@@ -191,7 +191,7 @@ class ConfigSyncTask extends Task {
                 // Copy file to source dir
                 else {
                     $this->output->writeInfo("Copying config file '$source_dir_filepath' <- '$target_dir_filepath'");
-                    $fs->copy($target_dir_filepath, $source_dir_filepath, true, $source_dir_owner, $source_dir_group);
+                    $fs->copy($target_dir_filepath, $source_dir_filepath, true);
 
                     $dir_sync_status['new'][] = $target_dir_filename;
                 }
@@ -202,6 +202,6 @@ class ConfigSyncTask extends Task {
 
         // Write status file
         $this->output->writeDebug("Writing config directories sync status file");
-        $fs->write(self::SYNC_STATUS_FILE, json_encode($sync_status_new), 'vagrant');
+        $fs->write(self::SYNC_STATUS_FILE, json_encode($sync_status_new));
     }
 }

@@ -149,7 +149,7 @@ class Projects {
         $content = json_encode($catalog);
         if(!file_exists($file) || md5($content) !== md5_file($file)){
             $fs = Util::getFilesystem();
-            $fs->write($file, $content, 'vagrant');
+            $fs->write($file, $content);
             return true;
         }
 
@@ -168,7 +168,7 @@ class Projects {
         $content = json_encode($hosts);
         if(!file_exists($file) || md5($content) !== md5_file($file)){
             $fs = Util::getFilesystem();
-            $fs->write($file, $content, 'vagrant');
+            $fs->write($file, $content);
             return true;
         }
 
@@ -187,7 +187,7 @@ class Projects {
         $content = json_encode($shortcuts);
         if(!file_exists($file) || md5($content) !== md5_file($file)){
             $fs = Util::getFilesystem();
-            $fs->write($file, $content, 'vagrant');
+            $fs->write($file, $content);
             return true;
         }
 
